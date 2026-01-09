@@ -30,7 +30,7 @@
         <div class="embed-wrapper">
             <!-- Twitch Embed (responsive) -->
             <div class="embed-card fullwidth">
-                <div class="embed-title"><a href="https://www.twitch.tv/hd1920x1080">Live</a></div>
+                <a href="https://www.twitch.tv/hd1920x1080"><div class="embed-title">Live</div></a>
                 <div class="responsive-embed-row" style="display:flex;gap:1rem;align-items:stretch;">
                     <div class="responsive-embed player" style="flex:1 1 0;">
                         <iframe
@@ -174,7 +174,7 @@
     <section class="clips-section" aria-label="Clips und Shorts">
         <h2 class="section-title">Partner</h2>
         <div class="clips-grid">
-            <a class="link-card" href="https://yvolve.shop/?bg_ref=cnbZIhbZxH" target="_blank" rel="noopener noreferrer">
+            <a class="link-card" href="https://yvolve.shop/?bg_ref=cnbZIhbZxH" target="_blank" rel="noopener noreferrer" data-code="FullHD" onclick="copyDiscountCode(event)">
                 <img src="img/Evolve.png" alt="Evolve" class="icon">
                 <div class="card-text">
                     <strong>Yvolve</strong>
@@ -192,7 +192,7 @@
             </a>
 
             <a class="link-card" href="https://frugends.com/?srsltid=AfmBOoqjyBjbK5TWs0tAS4ELgV93XqTXzl84OChVKd93OVkjeWfH8wFT" target="_blank"
-               rel="noopener noreferrer">
+               rel="noopener noreferrer" data-code="FullHD" onclick="copyDiscountCode(event)">
                 <img src="img/Frugends.png" alt="Frugends" class="icon">
                 <div class="card-text">
                     <strong>Frugends</strong>
@@ -211,10 +211,68 @@
     // Jahr setzen
     document.getElementById('year').textContent = new Date().getFullYear();
 
+    // Kleine Helfer: Clipboard-Fallback, Toast-Anzeige und Copy-Handler
+    function copyToClipboardFallback(text) {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        // Vermeide Scrolljump
+        ta.style.position = 'fixed';
+        ta.style.left = '-9999px';
+        ta.setAttribute('aria-hidden', 'true');
+        document.body.appendChild(ta);
+        ta.select();
+        try { document.execCommand('copy'); } catch (e) { /* ignore */ }
+        document.body.removeChild(ta);
+    }
+
+    function showToast(message) {
+        const t = document.createElement('div');
+        t.textContent = message;
+        t.style.position = 'fixed';
+        t.style.right = '1rem';
+        t.style.bottom = '1rem';
+        t.style.padding = '0.5rem 0.75rem';
+        t.style.background = 'rgba(0,0,0,0.85)';
+        t.style.color = '#fff';
+        t.style.borderRadius = '6px';
+        t.style.zIndex = 9999;
+        t.style.fontSize = '0.9rem';
+        t.style.boxShadow = '0 2px 6px rgba(0,0,0,0.3)';
+        t.style.transition = 'opacity 0.3s ease';
+        document.body.appendChild(t);
+        // kurz sichtbar lassen
+        setTimeout(() => { t.style.opacity = '0'; }, 1400);
+        setTimeout(() => { if (t.parentNode) t.parentNode.removeChild(t); }, 1800);
+    }
+
+    function copyDiscountCode(event) {
+        // copy durchführen, bevor der Link das neue Tab öffnet
+        try {
+            const link = event.currentTarget || event.target;
+            const code = link && link.dataset && link.dataset.code;
+            if (!code) return;
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(code).then(() => {
+                    showToast('Rabattcode kopiert: ' + code);
+                }).catch(() => {
+                    copyToClipboardFallback(code);
+                    showToast('Rabattcode kopiert: ' + code);
+                });
+            } else {
+                copyToClipboardFallback(code);
+                showToast('Rabattcode kopiert: ' + code);
+            }
+        } catch (e) {
+            // still fail silently
+            console.warn('copyDiscountCode failed', e);
+        }
+    }
+
     // Versuche, der eingebetteten Kalender-Instanz per postMessage die Listenansicht anzufordern.
     // Hinweis: Viele Kalender-Widgets reagieren nicht auf postMessage; das ist ein harter Fallback.
     (function () {
         const iframe = document.getElementById('calendar-iframe');
+        if (!iframe) return; // robust gegen fehlenden iframe
         // Wenn der iframe geladen ist, sende eine message (empfänger muss das unterstützen)
         iframe.addEventListener('load', function () {
             try {
