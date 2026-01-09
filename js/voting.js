@@ -11,6 +11,8 @@ class VotingSystem {
         this.isLoggedIn = false;
         this.user = null;
         this.votingPhase = 'loading'; // loading, before, active, ended
+        this.voteCounts = {};
+        this.MESSAGE_TIMEOUT = 5000; // milliseconds
         this.init();
     }
 
@@ -163,7 +165,8 @@ class VotingSystem {
         }
         
         const clientId = this.config.TWITCH_CLIENT_ID;
-        const redirectUri = encodeURIComponent(window.location.href);
+        // Use origin + pathname for cleaner redirect URI without fragments/params
+        const redirectUri = encodeURIComponent(window.location.origin + window.location.pathname);
         const scope = 'user:read:email';
         
         const authUrl = `https://id.twitch.tv/oauth2/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=token&scope=${scope}`;
@@ -485,7 +488,7 @@ class VotingSystem {
             
             setTimeout(() => {
                 msgDiv.remove();
-            }, 5000);
+            }, this.MESSAGE_TIMEOUT);
         }
     }
 

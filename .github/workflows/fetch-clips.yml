@@ -34,7 +34,8 @@ jobs:
         env:
           TWITCH_CLIENT_ID: ${{ secrets.TWITCH_CLIENT_ID }}
           TWITCH_CLIENT_SECRET: ${{ secrets.TWITCH_CLIENT_SECRET }}
-          GITHUB_PAGES_DOMAIN: sommer2019.github.io
+          # Use repository variable or fall back to default
+          GITHUB_PAGES_DOMAIN: ${{ vars.GITHUB_PAGES_DOMAIN || 'sommer2019.github.io' }}
         run: |
           node fetch-clips.js
       
