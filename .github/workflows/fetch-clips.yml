@@ -1,0 +1,58 @@
+name: Fetch Twitch Clips
+
+on:
+  # Run every 6 hours
+  schedule:
+    - cron: '0 */6 * * *'
+  
+  # Allow manual trigger
+  workflow_dispatch:
+  
+  # Run on push to main (for testing)
+  push:
+    branches:
+      - main
+    paths:
+      - 'config.txt'
+
+jobs:
+  fetch-clips:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      
+      - name: Fetch clips from Twitch API
+        env:
+          TWITCH_CLIENT_ID: ${{ secrets.TWITCH_CLIENT_ID }}
+          TWITCH_CLIENT_SECRET: ${{ secrets.TWITCH_CLIENT_SECRET }}
+          GITHUB_PAGES_DOMAIN: sommer2019.github.io
+        run: |
+          node fetch-clips.js
+      
+      - name: Check for changes
+        id: git-check
+        run: |
+          git diff --exit-code clips-data.json || echo "changed=true" >> $GITHUB_OUTPUT
+      
+      - name: Commit and push if changed
+        if: steps.git-check.outputs.changed == 'true'
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add clips-data.json
+          git commit -m "Auto-update clips data [skip ci]"
+          git push
+      
+      - name: No changes
+        if: steps.git-check.outputs.changed != 'true'
+        run: |
+          echo "No changes to clips data"

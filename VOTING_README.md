@@ -72,44 +72,35 @@ Bearbeite `clips-data.json` und füge deine echten Clip-URLs hinzu:
 
 **Wichtig:** Ersetze `sommer2019.github.io` mit deiner tatsächlichen Domain im `embed_url`!
 
-#### Option B: GitHub Action für automatisches Clip-Fetching (Fortgeschritten)
+#### Option B: GitHub Action für automatisches Clip-Fetching (Empfohlen)
 
-Du kannst eine GitHub Action erstellen, die regelmäßig die Twitch API aufruft und `clips-data.json` aktualisiert. Dafür benötigst du:
+Das Repository enthält bereits eine GitHub Action (`.github/workflows/fetch-clips.yml`) und ein Node.js-Script (`fetch-clips.js`), die automatisch Clips von der Twitch API fetchen.
 
-1. Twitch App Secret (zusätzlich zur Client ID)
-2. GitHub Action, die OAuth Token generiert
-3. API-Aufruf an Twitch Clips Endpoint
-4. Commit der aktualisierten clips-data.json
+**Setup:**
 
-Beispiel-Workflow (`.github/workflows/fetch-clips.yml`):
+1. **GitHub Secrets hinzufügen:**
+   - Gehe zu deinem Repository → Settings → Secrets and variables → Actions
+   - Füge folgende Secrets hinzu:
+     - `TWITCH_CLIENT_ID`: Deine Twitch App Client ID
+     - `TWITCH_CLIENT_SECRET`: Deine Twitch App Client Secret (aus dem Dev Portal)
 
-```yaml
-name: Fetch Twitch Clips
-on:
-  schedule:
-    - cron: '0 */6 * * *'  # Alle 6 Stunden
-  workflow_dispatch:
+2. **GitHub Action aktivieren:**
+   - Die Action läuft automatisch alle 6 Stunden
+   - Oder manuell ausführen: Actions Tab → "Fetch Twitch Clips" → Run workflow
 
-jobs:
-  fetch:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Fetch Clips
-        env:
-          TWITCH_CLIENT_ID: ${{ secrets.TWITCH_CLIENT_ID }}
-          TWITCH_CLIENT_SECRET: ${{ secrets.TWITCH_CLIENT_SECRET }}
-        run: |
-          # Script zum Fetchen der Clips via Twitch API
-          # und Aktualisierung von clips-data.json
-      - name: Commit changes
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add clips-data.json
-          git commit -m "Update clips data" || exit 0
-          git push
-```
+3. **Lokales Testen (optional):**
+   ```bash
+   export TWITCH_CLIENT_ID="deine_client_id"
+   export TWITCH_CLIENT_SECRET="dein_secret"
+   export GITHUB_PAGES_DOMAIN="sommer2019.github.io"
+   node fetch-clips.js
+   ```
+
+Die Action:
+- Fetcht Clips basierend auf `config.txt` Einstellungen
+- Aktualisiert `clips-data.json` automatisch
+- Commitet Änderungen zurück ins Repository
+- Läuft alle 6 Stunden oder bei Config-Änderungen
 
 ## Verwendung
 
