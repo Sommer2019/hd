@@ -1,0 +1,18 @@
+# Twitch Clip Voting Configuration
+# Format: KEY=VALUE
+# Dates should be in ISO format: YYYY-MM-DDTHH:MM:SS
+
+# Voting period
+VOTING_START=2026-01-09T00:00:00
+VOTING_END=2026-01-16T23:59:59
+
+# Clip date range (clips created between these dates will be fetched)
+CLIPS_START=2025-12-01T00:00:00
+CLIPS_END=2026-01-09T00:00:00
+
+# Twitch configuration
+TWITCH_BROADCASTER_ID=hd1920x1080
+TWITCH_CLIENT_ID=YOUR_CLIENT_ID_HERE
+
+# Number of clips to show
+MAX_CLIPS=10

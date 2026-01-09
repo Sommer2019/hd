@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="de">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Clip Voting - HD1920x1080</title>
+    <meta name="description" content="Vote für deine Lieblings-Clips!">
+    <link rel="icon" href="../img/HD.png" type="image/png">
+    <link rel="apple-touch-icon" href="../img/HD.png">
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/voting.css">
+</head>
+<body>
+<header id="hero" class="hero fullwidth">
+    <div class="hero-overlay fullwidth">
+        <div class="container">
+            <div class="profile-box">
+                <img src="../img/HDProfile.webp" alt="HD Profilbild" class="profile-img">
+                <div class="profile-info">
+                    <h1>Clip Voting</h1>
+                    <p>Vote für deine Lieblings-Clips!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<main class="container">
+    <!-- Login Section -->
+    <section id="login-section" class="voting-section">
+        <div class="info-box">
+            <h2>Willkommen zum Clip Voting!</h2>
+            <p>Melde dich mit deinem Twitch-Account an, um für deine Lieblings-Clips zu voten.</p>
+            <button id="twitch-login-btn" class="primary-btn">
+                <img src="../img/twitch.svg" alt="Twitch" class="btn-icon">
+                Mit Twitch anmelden
+            </button>
+        </div>
+    </section>
+
+    <!-- Voting Status -->
+    <section id="voting-status" class="voting-section" style="display:none;">
+        <div class="info-box">
+            <div id="status-message"></div>
+            <div id="user-info" style="display:none;">
+                <p>Angemeldet als: <strong id="username"></strong></p>
+                <button id="logout-btn" class="secondary-btn">Abmelden</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Clips Grid -->
+    <section id="clips-section" class="voting-section" style="display:none;">
+        <h2 class="section-title">Clips zur Auswahl</h2>
+        <div id="clips-grid" class="clips-voting-grid">
+            <!-- Clips will be loaded dynamically -->
+        </div>
+    </section>
+
+    <!-- Results Section -->
+    <section id="results-section" class="voting-section" style="display:none;">
+        <h2 class="section-title">Voting Ergebnisse</h2>
+        <div id="results-grid" class="results-grid">
+            <!-- Results will be loaded dynamically -->
+        </div>
+    </section>
+
+    <!-- Loading Indicator -->
+    <div id="loading" class="loading" style="display:none;">
+        <div class="spinner"></div>
+        <p>Lädt...</p>
+    </div>
+
+    <footer class="footer">
+        <p><a href="../index.html">← Zurück zur Hauptseite</a></p>
+        <p>© <span id="year"></span> FullHD Media <a href="impressum.html">Impressum</a></p>
+    </footer>
+</main>
+
+<script src="../js/voting.js"></script>
+<script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+</script>
+</body>
+</html>
