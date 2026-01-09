@@ -1,0 +1,14 @@
+# Twitch Clip Voting Configuration
+# Format: KEY=VALUE
+
+# Voting Period
+VOTING_START=2026-01-10T00:00:00Z
+VOTING_END=2026-01-31T23:59:59Z
+
+# Clips Period (which clips to fetch)
+CLIPS_START=2026-01-01T00:00:00Z
+CLIPS_END=2026-01-09T23:59:59Z
+
+# Twitch Settings
+TWITCH_BROADCASTER_ID=hd1920x1080
+MAX_CLIPS=10

@@ -1,0 +1,487 @@
+<!doctype html>
+<html lang="de">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Clip Voting - HD1920x1080</title>
+    <meta name="description" content="Vote für die besten Clips von HD1920x1080!">
+    <link rel="icon" href="../img/HD.png" type="image/png">
+    <link rel="apple-touch-icon" href="../img/HD.png">
+    <link rel="stylesheet" href="../css/styles.css">
+    <style>
+        .voting-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .voting-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .voting-header h1 {
+            color: var(--accent);
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        
+        .voting-info {
+            background: var(--box-gradient);
+            border: 1px solid var(--box-border);
+            border-radius: 14px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .auth-section {
+            background: var(--box-gradient);
+            border: 1px solid var(--box-border);
+            border-radius: 14px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .auth-button, .vote-button {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .auth-button:hover, .vote-button:hover {
+            background: #9575ff;
+            transform: translateY(-2px);
+        }
+        
+        .auth-button:disabled, .vote-button:disabled {
+            background: #555;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .user-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logout-button {
+            background: transparent;
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .logout-button:hover {
+            background: var(--accent);
+            color: white;
+        }
+        
+        .clips-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .clip-card {
+            background: var(--box-gradient);
+            border: 1px solid var(--box-border);
+            border-radius: 14px;
+            padding: 16px;
+            transition: all 0.2s;
+        }
+        
+        .clip-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(124, 77, 255, 0.2);
+        }
+        
+        .clip-card.selected {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px var(--accent);
+        }
+        
+        .clip-embed {
+            width: 100%;
+            aspect-ratio: 16/9;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 12px;
+        }
+        
+        .clip-info {
+            margin-bottom: 12px;
+        }
+        
+        .clip-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: var(--accent);
+            margin-bottom: 8px;
+        }
+        
+        .clip-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            color: var(--muted);
+            margin-bottom: 8px;
+        }
+        
+        .clip-link {
+            display: inline-block;
+            color: var(--accent);
+            text-decoration: none;
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+        
+        .clip-link:hover {
+            text-decoration: underline;
+        }
+        
+        .vote-section {
+            text-align: center;
+        }
+        
+        .message {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .message.success {
+            background: rgba(76, 175, 80, 0.2);
+            border: 1px solid rgba(76, 175, 80, 0.5);
+            color: #a5d6a7;
+        }
+        
+        .message.error {
+            background: rgba(244, 67, 54, 0.2);
+            border: 1px solid rgba(244, 67, 54, 0.5);
+            color: #ef9a9a;
+        }
+        
+        .message.info {
+            background: rgba(33, 150, 243, 0.2);
+            border: 1px solid rgba(33, 150, 243, 0.5);
+            color: #90caf9;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--muted);
+        }
+        
+        .back-link {
+            display: inline-block;
+            color: var(--accent);
+            text-decoration: none;
+            margin-bottom: 20px;
+        }
+        
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        
+        @media (max-width: 768px) {
+            .clips-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="voting-container">
+        <a href="../index.html" class="back-link">← Zurück zur Startseite</a>
+        
+        <div class="voting-header">
+            <h1>🎬 Clip Voting</h1>
+            <p>Stimme für die besten Clips ab!</p>
+        </div>
+        
+        <div id="message-container"></div>
+        
+        <div class="voting-info">
+            <h3 style="color: var(--accent); margin-top: 0;">Voting Information</h3>
+            <div id="voting-dates">
+                <div class="loading">Lade Informationen...</div>
+            </div>
+        </div>
+        
+        <div class="auth-section" id="auth-section">
+            <div class="loading">Überprüfe Authentifizierung...</div>
+        </div>
+        
+        <div id="clips-container" style="display: none;">
+            <h2 style="color: var(--accent);">Wähle deinen Favoriten:</h2>
+            <div id="clips-grid" class="clips-grid"></div>
+            <div class="vote-section" style="margin-top: 30px;">
+                <button id="submit-vote-btn" class="vote-button" disabled>
+                    Vote abgeben
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:3000' : '';
+        
+        let config = null;
+        let clips = [];
+        let selectedClipId = null;
+        let currentUser = null;
+        
+        // Show message
+        function showMessage(message, type = 'info') {
+            const container = document.getElementById('message-container');
+            container.innerHTML = `<div class="message ${type}">${message}</div>`;
+            setTimeout(() => {
+                container.innerHTML = '';
+            }, 5000);
+        }
+        
+        // Load configuration
+        async function loadConfig() {
+            try {
+                const response = await fetch(`${API_BASE}/api/config`);
+                config = await response.json();
+                displayVotingInfo();
+            } catch (error) {
+                console.error('Error loading config:', error);
+                showMessage('Fehler beim Laden der Konfiguration', 'error');
+            }
+        }
+        
+        // Display voting information
+        function displayVotingInfo() {
+            if (!config) return;
+            
+            const votingStart = new Date(config.VOTING_START);
+            const votingEnd = new Date(config.VOTING_END);
+            const now = new Date();
+            
+            let statusHtml = '';
+            
+            if (now < votingStart) {
+                statusHtml = `<p>⏳ Das Voting startet am <strong>${votingStart.toLocaleString('de-DE')}</strong></p>`;
+            } else if (now > votingEnd) {
+                statusHtml = `<p>✅ Das Voting ist beendet. <a href="results.html">Ergebnisse ansehen</a></p>`;
+            } else {
+                statusHtml = `<p>🎉 Das Voting läuft bis <strong>${votingEnd.toLocaleString('de-DE')}</strong></p>`;
+            }
+            
+            statusHtml += `<p>Clips vom <strong>${new Date(config.CLIPS_START).toLocaleDateString('de-DE')}</strong> bis <strong>${new Date(config.CLIPS_END).toLocaleDateString('de-DE')}</strong></p>`;
+            
+            document.getElementById('voting-dates').innerHTML = statusHtml;
+        }
+        
+        // Check authentication
+        async function checkAuth() {
+            try {
+                const response = await fetch(`${API_BASE}/api/user`, {
+                    credentials: 'include'
+                });
+                
+                if (response.ok) {
+                    currentUser = await response.json();
+                    displayAuthenticatedState();
+                    await loadClips();
+                } else {
+                    displayUnauthenticatedState();
+                }
+            } catch (error) {
+                console.error('Error checking auth:', error);
+                displayUnauthenticatedState();
+            }
+        }
+        
+        // Display authenticated state
+        function displayAuthenticatedState() {
+            const authSection = document.getElementById('auth-section');
+            authSection.innerHTML = `
+                <div class="user-info">
+                    <div>
+                        <strong>Angemeldet als:</strong> ${currentUser.display_name}
+                    </div>
+                    <button class="logout-button" onclick="logout()">Abmelden</button>
+                </div>
+            `;
+        }
+        
+        // Display unauthenticated state
+        function displayUnauthenticatedState() {
+            const authSection = document.getElementById('auth-section');
+            authSection.innerHTML = `
+                <h3 style="color: var(--accent); margin-top: 0;">Twitch Authentifizierung erforderlich</h3>
+                <p>Melde dich mit deinem Twitch-Account an, um abzustimmen.</p>
+                <button class="auth-button" onclick="loginWithTwitch()">
+                    Mit Twitch anmelden
+                </button>
+            `;
+        }
+        
+        // Login with Twitch
+        async function loginWithTwitch() {
+            try {
+                const response = await fetch(`${API_BASE}/api/auth/twitch`);
+                const data = await response.json();
+                window.location.href = data.authUrl;
+            } catch (error) {
+                console.error('Error starting auth:', error);
+                showMessage('Fehler bei der Anmeldung', 'error');
+            }
+        }
+        
+        // Logout
+        async function logout() {
+            try {
+                await fetch(`${API_BASE}/api/logout`, {
+                    method: 'POST',
+                    credentials: 'include'
+                });
+                window.location.reload();
+            } catch (error) {
+                console.error('Error logging out:', error);
+            }
+        }
+        
+        // Load clips
+        async function loadClips() {
+            try {
+                const response = await fetch(`${API_BASE}/api/clips`);
+                clips = await response.json();
+                displayClips();
+                document.getElementById('clips-container').style.display = 'block';
+            } catch (error) {
+                console.error('Error loading clips:', error);
+                showMessage('Fehler beim Laden der Clips', 'error');
+            }
+        }
+        
+        // Display clips
+        function displayClips() {
+            const grid = document.getElementById('clips-grid');
+            grid.innerHTML = '';
+            
+            clips.forEach(clip => {
+                const card = document.createElement('div');
+                card.className = 'clip-card';
+                card.dataset.clipId = clip.id;
+                
+                const embedId = clip.embed_url.split('clip=')[1]?.split('&')[0] || clip.id;
+                
+                card.innerHTML = `
+                    <div class="clip-embed">
+                        <iframe
+                            src="https://clips.twitch.tv/embed?clip=${embedId}&parent=${window.location.hostname}"
+                            frameborder="0"
+                            allowfullscreen="true"
+                            scrolling="no"
+                            width="100%"
+                            height="100%">
+                        </iframe>
+                    </div>
+                    <div class="clip-info">
+                        <div class="clip-title">${clip.title}</div>
+                        <div class="clip-meta">
+                            <span>👁️ ${clip.view_count.toLocaleString()} Views</span>
+                            <span>📅 ${new Date(clip.created_at).toLocaleDateString('de-DE')}</span>
+                        </div>
+                        <a href="${clip.url}" target="_blank" class="clip-link">
+                            Clip auf Twitch ansehen →
+                        </a>
+                    </div>
+                    <div class="vote-section">
+                        <button class="vote-button" onclick="selectClip('${clip.id}')">
+                            Diesen Clip wählen
+                        </button>
+                    </div>
+                `;
+                
+                grid.appendChild(card);
+            });
+        }
+        
+        // Select clip
+        function selectClip(clipId) {
+            selectedClipId = clipId;
+            
+            // Update UI
+            document.querySelectorAll('.clip-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            document.querySelector(`[data-clip-id="${clipId}"]`).classList.add('selected');
+            
+            document.getElementById('submit-vote-btn').disabled = false;
+        }
+        
+        // Submit vote
+        async function submitVote() {
+            if (!selectedClipId) {
+                showMessage('Bitte wähle einen Clip aus', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/vote`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify({ clipId: selectedClipId })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showMessage('✅ Dein Vote wurde erfolgreich abgegeben!', 'success');
+                    document.getElementById('submit-vote-btn').disabled = true;
+                    document.querySelectorAll('.vote-button').forEach(btn => {
+                        btn.disabled = true;
+                        btn.textContent = 'Bereits abgestimmt';
+                    });
+                } else {
+                    showMessage(data.error || 'Fehler beim Abstimmen', 'error');
+                }
+            } catch (error) {
+                console.error('Error submitting vote:', error);
+                showMessage('Fehler beim Abstimmen', 'error');
+            }
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Check for auth callback
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('auth') === 'success') {
+                showMessage('Erfolgreich angemeldet!', 'success');
+                // Clean URL
+                window.history.replaceState({}, '', window.location.pathname);
+            } else if (urlParams.get('error') === 'auth_failed') {
+                showMessage('Anmeldung fehlgeschlagen', 'error');
+                window.history.replaceState({}, '', window.location.pathname);
+            }
+            
+            await loadConfig();
+            await checkAuth();
+            
+            // Bind submit button
+            document.getElementById('submit-vote-btn').addEventListener('click', submitVote);
+        });
+    </script>
+</body>
+</html>

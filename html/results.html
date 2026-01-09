@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="de">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Voting Ergebnisse - HD1920x1080</title>
+    <meta name="description" content="Die Ergebnisse des Clip Votings!">
+    <link rel="icon" href="../img/HD.png" type="image/png">
+    <link rel="apple-touch-icon" href="../img/HD.png">
+    <link rel="stylesheet" href="../css/styles.css">
+    <style>
+        .results-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .results-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .results-header h1 {
+            color: var(--accent);
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        
+        .results-stats {
+            background: var(--box-gradient);
+            border: 1px solid var(--box-border);
+            border-radius: 14px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .results-stats h3 {
+            color: var(--accent);
+            margin-top: 0;
+        }
+        
+        .stat-value {
+            font-size: 36px;
+            font-weight: bold;
+            color: var(--accent);
+        }
+        
+        .podium {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 40px;
+            align-items: end;
+        }
+        
+        .podium-place {
+            background: var(--box-gradient);
+            border: 1px solid var(--box-border);
+            border-radius: 14px;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .podium-place.first {
+            order: 2;
+            border-color: #FFD700;
+            transform: translateY(-20px);
+        }
+        
+        .podium-place.second {
+            order: 1;
+        }
+        
+        .podium-place.third {
+            order: 3;
+        }
+        
+        .place-number {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+        
+        .clip-card {
+            background: var(--box-gradient);
+            border: 1px solid var(--box-border);
+            border-radius: 14px;
+            padding: 16px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        
+        .clip-rank {
+            font-size: 32px;
+            font-weight: bold;
+            color: var(--accent);
+            min-width: 50px;
+            text-align: center;
+        }
+        
+        .clip-embed {
+            flex: 0 0 300px;
+            aspect-ratio: 16/9;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .clip-info {
+            flex: 1;
+        }
+        
+        .clip-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--accent);
+            margin-bottom: 10px;
+        }
+        
+        .clip-meta {
+            display: flex;
+            gap: 20px;
+            font-size: 14px;
+            color: var(--muted);
+            margin-bottom: 10px;
+        }
+        
+        .clip-votes {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--accent);
+            margin-bottom: 10px;
+        }
+        
+        .clip-link {
+            display: inline-block;
+            color: var(--accent);
+            text-decoration: none;
+            font-size: 14px;
+        }
+        
+        .clip-link:hover {
+            text-decoration: underline;
+        }
+        
+        .message {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .message.error {
+            background: rgba(244, 67, 54, 0.2);
+            border: 1px solid rgba(244, 67, 54, 0.5);
+            color: #ef9a9a;
+        }
+        
+        .message.info {
+            background: rgba(33, 150, 243, 0.2);
+            border: 1px solid rgba(33, 150, 243, 0.5);
+            color: #90caf9;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--muted);
+        }
+        
+        .back-link {
+            display: inline-block;
+            color: var(--accent);
+            text-decoration: none;
+            margin-bottom: 20px;
+        }
+        
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        
+        @media (max-width: 768px) {
+            .podium {
+                grid-template-columns: 1fr;
+            }
+            
+            .podium-place.first {
+                order: 1;
+                transform: none;
+            }
+            
+            .podium-place.second {
+                order: 2;
+            }
+            
+            .podium-place.third {
+                order: 3;
+            }
+            
+            .clip-card {
+                flex-direction: column;
+            }
+            
+            .clip-embed {
+                flex: 1 1 auto;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="results-container">
+        <a href="../index.html" class="back-link">← Zurück zur Startseite</a>
+        
+        <div class="results-header">
+            <h1>🏆 Voting Ergebnisse</h1>
+            <p>Die besten Clips - gewählt von der Community!</p>
+        </div>
+        
+        <div id="message-container"></div>
+        
+        <div id="loading" class="loading">
+            Lade Ergebnisse...
+        </div>
+        
+        <div id="results-content" style="display: none;">
+            <div class="results-stats">
+                <h3>Voting Statistiken</h3>
+                <div class="stat-value" id="total-votes">0</div>
+                <div style="color: var(--muted);">Stimmen insgesamt</div>
+            </div>
+            
+            <h2 style="color: var(--accent); text-align: center; margin-bottom: 30px;">🥇 Top 3</h2>
+            <div id="podium" class="podium"></div>
+            
+            <h2 style="color: var(--accent); margin-top: 50px; margin-bottom: 20px;">Alle Ergebnisse</h2>
+            <div id="all-results"></div>
+        </div>
+    </div>
+    
+    <script>
+        const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:3000' : '';
+        
+        // Show message
+        function showMessage(message, type = 'info') {
+            const container = document.getElementById('message-container');
+            container.innerHTML = `<div class="message ${type}">${message}</div>`;
+        }
+        
+        // Load results
+        async function loadResults() {
+            try {
+                const response = await fetch(`${API_BASE}/api/results`);
+                
+                if (!response.ok) {
+                    const error = await response.json();
+                    showMessage(error.error || 'Ergebnisse noch nicht verfügbar', 'info');
+                    document.getElementById('loading').style.display = 'none';
+                    return;
+                }
+                
+                const data = await response.json();
+                displayResults(data);
+            } catch (error) {
+                console.error('Error loading results:', error);
+                showMessage('Fehler beim Laden der Ergebnisse', 'error');
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+        
+        // Display results
+        function displayResults(data) {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('results-content').style.display = 'block';
+            
+            // Display total votes
+            document.getElementById('total-votes').textContent = data.totalVotes;
+            
+            // Display top 3 podium
+            const podium = document.getElementById('podium');
+            const medals = ['🥇', '🥈', '🥉'];
+            const classes = ['first', 'second', 'third'];
+            
+            data.topClips.slice(0, 3).forEach((clip, index) => {
+                const embedId = clip.embed_url.split('clip=')[1]?.split('&')[0] || clip.id;
+                
+                const placeDiv = document.createElement('div');
+                placeDiv.className = `podium-place ${classes[index]}`;
+                placeDiv.innerHTML = `
+                    <div class="place-number">${medals[index]}</div>
+                    <div class="clip-embed" style="margin-bottom: 15px;">
+                        <iframe
+                            src="https://clips.twitch.tv/embed?clip=${embedId}&parent=${window.location.hostname}"
+                            frameborder="0"
+                            allowfullscreen="true"
+                            scrolling="no"
+                            width="100%"
+                            height="100%">
+                        </iframe>
+                    </div>
+                    <div class="clip-title" style="font-size: 14px;">${clip.title}</div>
+                    <div class="clip-votes" style="font-size: 20px;">${clip.votes} Votes</div>
+                    <a href="${clip.url}" target="_blank" class="clip-link">
+                        Clip ansehen →
+                    </a>
+                `;
+                podium.appendChild(placeDiv);
+            });
+            
+            // Display all results
+            const allResults = document.getElementById('all-results');
+            data.topClips.forEach((clip, index) => {
+                const embedId = clip.embed_url.split('clip=')[1]?.split('&')[0] || clip.id;
+                
+                const card = document.createElement('div');
+                card.className = 'clip-card';
+                card.innerHTML = `
+                    <div class="clip-rank">#${index + 1}</div>
+                    <div class="clip-embed">
+                        <iframe
+                            src="https://clips.twitch.tv/embed?clip=${embedId}&parent=${window.location.hostname}"
+                            frameborder="0"
+                            allowfullscreen="true"
+                            scrolling="no"
+                            width="100%"
+                            height="100%">
+                        </iframe>
+                    </div>
+                    <div class="clip-info">
+                        <div class="clip-title">${clip.title}</div>
+                        <div class="clip-meta">
+                            <span>👁️ ${clip.view_count.toLocaleString()} Views</span>
+                            <span>📅 ${new Date(clip.created_at).toLocaleDateString('de-DE')}</span>
+                        </div>
+                        <div class="clip-votes">🗳️ ${clip.votes} Votes</div>
+                        <a href="${clip.url}" target="_blank" class="clip-link">
+                            Clip auf Twitch ansehen →
+                        </a>
+                    </div>
+                `;
+                allResults.appendChild(card);
+            });
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadResults();
+        });
+    </script>
+</body>
+</html>
