@@ -111,14 +111,58 @@
             </a>
 
             <a class="link-card"
-               href="https://drive.google.com/file/d/1zb60AcfXtj-WzbE56mu9e8EVp72ox4uQ/view?usp=sharing&utm_medium=social&utm_source=heylink.me"
-               target="_blank" rel="noopener noreferrer">
+               href="download/HD1920x1080_V1.10.zip"
+               data-file="download/HD1920x1080_V1.10.zip"
+               onclick="event.preventDefault(); showDownloadConfirm(this.dataset.file);"
+               rel="noopener noreferrer">
                 <img src="img/MinecraftRessourcePack.webp" alt="Ressource Pack" class="icon">
                 <div class="card-text">
                     <strong>Minecraft ResourcePack</strong>
                     <span>Download</span>
                 </div>
             </a>
+
+            <!-- einfacher Bestätigungsdialog -->
+            <div id="download-modal" class="download-modal" role="dialog" aria-modal="true" aria-hidden="true">
+                <div class="modal-backdrop" onclick="hideDownloadConfirm()" aria-hidden="true"></div>
+                <div class="modal-card" role="document">
+                    <h3 class="modal-title">Download bestätigen</h3>
+                    <p class="modal-message">Möchtest du das Resource-Pack herunterladen: <strong>HD1920x1080_V1.10.zip</strong>?</p>
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-secondary" onclick="hideDownloadConfirm()">Abbrechen</button>
+                        <button type="button" class="btn btn-primary" onclick="confirmDownload()">Herunterladen</button>
+                    </div>
+                </div>
+            </div>
+
+            <script>
+                function showDownloadConfirm(file) {
+                    const modal = document.getElementById('download-modal');
+                    modal.dataset.file = file;
+                    modal.classList.add('is-open');
+                    modal.setAttribute('aria-hidden', 'false');
+                    // focus first action for keyboard users
+                    setTimeout(() => { modal.querySelector('.btn-secondary')?.focus(); }, 10);
+                }
+                function hideDownloadConfirm() {
+                    const modal = document.getElementById('download-modal');
+                    modal.classList.remove('is-open');
+                    modal.setAttribute('aria-hidden', 'true');
+                }
+                function confirmDownload() {
+                    const modal = document.getElementById('download-modal');
+                    const file = modal.dataset.file;
+                    hideDownloadConfirm();
+                    // programmgesteuerter Download (setzt a.download, falls gewünscht)
+                    const a = document.createElement('a');
+                    a.href = file;
+                    a.download = 'HD1920x1080_V1.10.zip';
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
+                    if (typeof showToast === 'function') showToast('Download gestartet: ' + file);
+                }
+            </script>
 
             <a class="link-card" href="https://discord.gg/Zp5KNqCHzc" target="_blank" rel="noopener noreferrer">
                 <img src="img/discord.svg" alt="Discord" class="icon">

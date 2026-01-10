@@ -116,7 +116,44 @@ body{
 /* Impressum box uses same base gradient */
 .impressum-container{background:var(--box-gradient);border:1px solid var(--box-border)}
 
-/* Auf sehr breiten Bildschirmen noch deutlicher: Twitch größer */
+/* Modal / Download-Confirm styles (harmonisiert mit Site-Design) */
+.download-modal{
+  display:none; /* hidden by default */
+  position:fixed;inset:0;align-items:center;justify-content:center;z-index:10050;
+}
+.download-modal.is-open{display:flex}
+.download-modal .modal-backdrop{
+  position:absolute;inset:0;background:rgba(2,2,3,0.6);backdrop-filter:blur(4px);
+}
+.download-modal .modal-card{
+  position:relative;z-index:10051;min-width:280px;max-width:520px;width:min(92%,520px);
+  /* Vollständig undurchsichtiger Hintergrund für das Popup */
+  background: #0b0b0d; /* dunkles, solids Hintergrund (keine Transparenz) */
+  border:1px solid rgba(124,77,255,0.10);
+  box-shadow:0 18px 50px rgba(0,0,0,0.8);
+  padding:16px;border-radius:12px;color:#e6eef8;
+  transform:translateY(6px) scale(0.98);opacity:0;transition:transform .18s cubic-bezier(.2,.9,.2,1),opacity .18s ease,box-shadow .12s ease;
+  /* ensure text and buttons are readable */
+}
+.download-modal.is-open .modal-card{transform:translateY(0) scale(1);opacity:1}
+.modal-title{margin:0 0 6px 0;font-size:1.05rem;color:var(--accent);font-weight:700}
+.modal-message{margin:0 0 12px 0;color:rgba(230,238,248,0.9);font-size:0.95rem}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end}
+
+/* Buttons matching site style */
+.btn{display:inline-flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;border:1px solid transparent;cursor:pointer;font-weight:600;font-size:0.95rem}
+.btn:focus{outline:2px solid rgba(124,77,255,0.12);outline-offset:2px}
+.btn-primary{
+  background:linear-gradient(180deg, rgba(124,77,255,0.95), rgba(100,50,240,0.95));
+  color:#fff;border-color:rgba(124,77,255,0.12);box-shadow:0 8px 24px rgba(124,77,255,0.12);
+}
+.btn-primary:hover{transform:translateY(-2px)}
+.btn-secondary{
+  background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  color:var(--muted);border:1px solid rgba(255,255,255,0.03);
+}
+.btn-secondary:hover{transform:translateY(-2px)}
+
 @media (min-width:1200px){
   .embed-wrapper{grid-template-columns:2fr 1fr}
   .responsive-embed{min-height:480px}

@@ -4,13 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="00c35883-868f-4c61-99bc-64796ad3d22a" name="Changes" comment="Update email links in index.html and impressum.html to include subject lines">
-      <change afterPath="$PROJECT_DIR$/img/OB/festlicherBart.png" afterDir="false" />
+    <list default="true" id="00c35883-868f-4c61-99bc-64796ad3d22a" name="Changes" comment="Update meta title in multiple HTML files to reflect branding change">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ob/media.html" beforeDir="false" afterPath="$PROJECT_DIR$/ob/media.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ob/photos.html" beforeDir="false" afterPath="$PROJECT_DIR$/ob/photos.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ob/posts.html" beforeDir="false" afterPath="$PROJECT_DIR$/ob/posts.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ob/videos.html" beforeDir="false" afterPath="$PROJECT_DIR$/ob/videos.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/css/styles.css" beforeDir="false" afterPath="$PROJECT_DIR$/css/styles.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/download/HD1920x1080 V1.10.zip" beforeDir="false" afterPath="$PROJECT_DIR$/download/HD1920x1080_V1.10.zip" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/download/Test.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/index.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -25,6 +24,24 @@
     </option>
   </component>
   <component name="Git.Settings">
+    <favorite-branches>
+      <branch-storage>
+        <map>
+          <entry type="REMOTE">
+            <value>
+              <list>
+                <branch-info repo="$PROJECT_DIR$" source="2origin/master" />
+              </list>
+            </value>
+          </entry>
+        </map>
+      </branch-storage>
+    </favorite-branches>
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="master" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="GitHubPullRequestSearchHistory">{
@@ -50,26 +67,26 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;D:/Daten/Coding/HD/html&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;onboarding.tips.debug.path&quot;: &quot;D:/Daten/Coding/HD/html/src/main/java/org/example/Main.java&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "DefaultHtmlFileTemplate": "HTML File",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "git-widget-placeholder": "masterpushed",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "D:/Daten/Coding/HD/html",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "onboarding.tips.debug.path": "D:/Daten/Coding/HD/html/src/main/java/org/example/Main.java",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="D:\Daten\Coding\HD\html" />
@@ -103,7 +120,8 @@
       <workItem from="1767858762680" duration="1961000" />
       <workItem from="1767969988271" duration="3328000" />
       <workItem from="1768036646289" duration="6470000" />
-      <workItem from="1768056383395" duration="1976000" />
+      <workItem from="1768056383395" duration="2668000" />
+      <workItem from="1768062115141" duration="729000" />
     </task>
     <task id="LOCAL-00001" summary="Add initial website files including index, impressum, and styles">
       <option name="closed" value="true" />
@@ -193,7 +211,31 @@
       <option name="project" value="LOCAL" />
       <updated>1768040586896</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="Update workspace.xml to modify change list and fix XML formatting">
+      <option name="closed" value="true" />
+      <created>1768058636059</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1768058636059</updated>
+    </task>
+    <task id="LOCAL-00013" summary="Update posts.html to enhance layout and improve user interface elements">
+      <option name="closed" value="true" />
+      <created>1768058878115</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1768058878115</updated>
+    </task>
+    <task id="LOCAL-00014" summary="Update meta title in multiple HTML files to reflect branding change">
+      <option name="closed" value="true" />
+      <created>1768059313675</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1768059313675</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -221,7 +263,10 @@
     <MESSAGE value="Refactor HTML file paths and create StreamElements page" />
     <MESSAGE value="Add discount code copy functionality and improve link handling in index.html" />
     <MESSAGE value="Update email links in index.html and impressum.html to include subject lines" />
-    <option name="LAST_COMMIT_MESSAGE" value="Update email links in index.html and impressum.html to include subject lines" />
+    <MESSAGE value="Update workspace.xml to modify change list and fix XML formatting" />
+    <MESSAGE value="Update posts.html to enhance layout and improve user interface elements" />
+    <MESSAGE value="Update meta title in multiple HTML files to reflect branding change" />
+    <option name="LAST_COMMIT_MESSAGE" value="Update meta title in multiple HTML files to reflect branding change" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
