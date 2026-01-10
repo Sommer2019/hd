@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="00c35883-868f-4c61-99bc-64796ad3d22a" name="Changes" comment="Update email links in index.html and impressum.html to include subject lines">
+      <change afterPath="$PROJECT_DIR$/.idea/copilot.data.migration.agent.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/copilot.data.migration.ask.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/copilot.data.migration.edit.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/img/OF.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/img/OnlyBart.webp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ob/posts.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ob.html" beforeDir="false" afterPath="$PROJECT_DIR$/ob.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ob/media.html" beforeDir="false" afterPath="$PROJECT_DIR$/ob/media.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ob/photos.html" beforeDir="false" afterPath="$PROJECT_DIR$/ob/photos.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ob/videos.html" beforeDir="false" afterPath="$PROJECT_DIR$/ob/videos.html" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="HTML File" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;Sommer2019&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/Sommer2019/CeddyWeb.git&quot;,
+    &quot;accountId&quot;: &quot;8b7e0036-1a04-4c3e-8371-9a5a7a69ed1d&quot;
+  }
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 5
+}</component>
+  <component name="ProjectId" id="37l4ZKcI29Kzi4y37WArcZ5eEnZ" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "DefaultHtmlFileTemplate": "HTML File",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "git-widget-placeholder": "master",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "D:/Daten/Coding/HD/html",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "onboarding.tips.debug.path": "D:/Daten/Coding/HD/html/src/main/java/org/example/Main.java",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\Daten\Coding\HD\html" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\Daten\Coding\HD\img" />
+      <recent name="D:\Daten\Coding\HD" />
+      <recent name="D:\Daten\Coding\HD\ob" />
+      <recent name="D:\Daten\Coding\HD\ob\HD" />
+      <recent name="D:\Daten\Coding\HD\html" />
+    </key>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9823dce3aa75-bf35d07a577b-intellij.indexing.shared.core-IU-252.28238.7" />
+        <option value="bundled-js-predefined-d6986cc7102b-a71380e98a7c-JavaScript-IU-252.28238.7" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="00c35883-868f-4c61-99bc-64796ad3d22a" name="Changes" comment="" />
+      <created>1767464378385</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1767464378385</updated>
+      <workItem from="1767464380258" duration="3431000" />
+      <workItem from="1767691403925" duration="3143000" />
+      <workItem from="1767694755553" duration="318000" />
+      <workItem from="1767858762680" duration="1961000" />
+      <workItem from="1767969988271" duration="3328000" />
+      <workItem from="1768036646289" duration="6470000" />
+    </task>
+    <task id="LOCAL-00001" summary="Add initial website files including index, impressum, and styles">
+      <option name="closed" value="true" />
+      <created>1767467380456</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1767467380457</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Add project configuration and resource files">
+      <option name="closed" value="true" />
+      <created>1767467550753</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1767467550753</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Add project configuration and resource files">
+      <option name="closed" value="true" />
+      <created>1767467796486</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1767467796486</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Update impressum and index pages with new content and styling; add embedded live feeds">
+      <option name="closed" value="true" />
+      <created>1767691874774</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1767691874774</updated>
+    </task>
+    <task id="LOCAL-00005" summary="Add project configuration files and new HTML pages for Streamplan and updated Impressum">
+      <option name="closed" value="true" />
+      <created>1767694077922</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1767694077922</updated>
+    </task>
+    <task id="LOCAL-00006" summary="Update index and Streamplan pages for improved layout and styling; enhance fullwidth hero section">
+      <option name="closed" value="true" />
+      <created>1767694390336</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1767694390336</updated>
+    </task>
+    <task id="LOCAL-00007" summary="Refactor HTML structure and improve accessibility for Streamplan page">
+      <option name="closed" value="true" />
+      <created>1767860654498</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1767860654498</updated>
+    </task>
+    <task id="LOCAL-00008" summary="Update index.html to rename 'Puzzle' to 'Tanggle.io' and change button text to 'Live mitpuzzeln'">
+      <option name="closed" value="true" />
+      <created>1767970070952</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1767970070952</updated>
+    </task>
+    <task id="LOCAL-00009" summary="Refactor HTML file paths and create StreamElements page">
+      <option name="closed" value="true" />
+      <created>1767972596030</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1767972596030</updated>
+    </task>
+    <task id="LOCAL-00010" summary="Add discount code copy functionality and improve link handling in index.html">
+      <option name="closed" value="true" />
+      <created>1767973239722</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1767973239723</updated>
+    </task>
+    <task id="LOCAL-00011" summary="Update email links in index.html and impressum.html to include subject lines">
+      <option name="closed" value="true" />
+      <created>1768040586896</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1768040586896</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Add initial website files including index, impressum, and styles" />
+    <MESSAGE value="Add project configuration and resource files" />
+    <MESSAGE value="Update impressum and index pages with new content and styling; add embedded live feeds" />
+    <MESSAGE value="Add project configuration files and new HTML pages for Streamplan and updated Impressum" />
+    <MESSAGE value="Update index and Streamplan pages for improved layout and styling; enhance fullwidth hero section" />
+    <MESSAGE value="Refactor HTML structure and improve accessibility for Streamplan page" />
+    <MESSAGE value="Update index.html to rename 'Puzzle' to 'Tanggle.io' and change button text to 'Live mitpuzzeln'" />
+    <MESSAGE value="Refactor HTML file paths and create StreamElements page" />
+    <MESSAGE value="Add discount code copy functionality and improve link handling in index.html" />
+    <MESSAGE value="Update email links in index.html and impressum.html to include subject lines" />
+    <option name="LAST_COMMIT_MESSAGE" value="Update email links in index.html and impressum.html to include subject lines" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/html/src/main/java/org/example/Main.java</url>
+          <line>13</line>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+  <component name="github-copilot-workspace">
+    <instructionFileLocations>
+      <option value=".github/instructions" />
+    </instructionFileLocations>
+    <promptFileLocations>
+      <option value=".github/prompts" />
+    </promptFileLocations>
+  </component>
+</project>
