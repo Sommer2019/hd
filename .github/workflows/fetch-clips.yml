@@ -1,0 +1,48 @@
+name: Fetch Twitch Clips
+
+on:
+  schedule:
+    # Run on the 1st day of each month at 00:00 UTC
+    - cron: '0 0 1 * *'
+  workflow_dispatch:
+    inputs:
+      start_date:
+        description: 'Start date (YYYY-MM-DD)'
+        required: false
+      end_date:
+        description: 'End date (YYYY-MM-DD)'
+        required: false
+
+permissions:
+  contents: write
+
+jobs:
+  fetch-clips:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Fetch Twitch Clips
+        env:
+          TWITCH_CLIENT_ID: ${{ secrets.TWITCH_CLIENT_ID }}
+          TWITCH_CLIENT_SECRET: ${{ secrets.TWITCH_CLIENT_SECRET }}
+          VOTING_START_DATE: ${{ secrets.VOTING_START_DATE }}
+          VOTING_END_DATE: ${{ secrets.VOTING_END_DATE }}
+          MANUAL_START_DATE: ${{ github.event.inputs.start_date }}
+          MANUAL_END_DATE: ${{ github.event.inputs.end_date }}
+        run: |
+          node .github/scripts/fetch-clips.js
+
+      - name: Commit and push changes
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add votingData/clips.json votingData/config.json
+          git diff --staged --quiet || git commit -m "Update clips for voting period"
+          git push

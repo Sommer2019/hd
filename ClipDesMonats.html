@@ -6,19 +6,23 @@
     <meta name="description" content="Clip des Monats">
     <link rel="icon" href="img/HD.png" type="image/png">
     <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/clip-voting.css">
 </head>
 <body>
 <main class="container">
     <div>
         <h1 class="page-title">Clip des Monats</h1>
         <p>Hier kannst du für die Top 10 Clips des vergangenen Monats stimmen / die Ergebnisse einsehen, falls das aktuelle Voting noch nicht zur Verfügung steht.</p>
-        <!-- Kalender Embed -->
-        <div class="embed-card fullwidth">
-
-            <p style="margin-top:18px">
-                <a href="index.html" class="btn">← Zurück</a>
-            </p>
+        
+        <div id="voting-container" class="voting-container">
+            <div class="loading-message">
+                <p>Lade Voting-Daten...</p>
+            </div>
         </div>
+
+        <p style="margin-top:18px">
+            <a href="index.html" class="btn">← Zurück</a>
+        </p>
     </div>
 
 
@@ -28,5 +32,6 @@
     </footer>
 </main>
 <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+<script src="js/clip-voting.js"></script>
 </body>
 </html>

@@ -1,0 +1,35 @@
+name: Submit Vote
+
+on:
+  repository_dispatch:
+    types: [submit-vote]
+
+permissions:
+  contents: write
+
+jobs:
+  submit-vote:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Process Vote
+        env:
+          CLIP_ID: ${{ github.event.client_payload.clipId }}
+          IP_HASH: ${{ github.event.client_payload.ipHash }}
+        run: |
+          node .github/scripts/submit-vote.js
+
+      - name: Commit and push changes
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add votingData/votes.json
+          git diff --staged --quiet || git commit -m "Record vote"
+          git push

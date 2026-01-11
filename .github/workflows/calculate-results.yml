@@ -1,0 +1,35 @@
+name: Calculate Results
+
+on:
+  schedule:
+    # Run on the last day of each month at 23:55 UTC
+    # Note: This runs on days 28-31, the script should check if it's actually the last day
+    - cron: '55 23 28-31 * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  calculate-results:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Calculate Top 10 Results
+        run: |
+          node .github/scripts/calculate-results.js
+
+      - name: Commit and push changes
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add votingData/results.json votingData/config.json
+          git diff --staged --quiet || git commit -m "Calculate voting results"
+          git push
