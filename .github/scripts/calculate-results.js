@@ -1,12 +1,12 @@
 const fs = require('fs');
 
 function main() {
-  // Check if today is actually the last day of the month
   const today = new Date();
+  
+  // Only calculate results on the last day of the month
   const tomorrow = new Date(today);
   tomorrow.setDate(tomorrow.getDate() + 1);
   
-  // If tomorrow is not the 1st, we're not at the end of the month yet
   if (tomorrow.getDate() !== 1) {
     console.log('Not the last day of the month yet, skipping calculation');
     return;
