@@ -155,11 +155,24 @@ async function main() {
   let clipsStartDate, clipsEndDate, votingStartDate, votingEndDate;
   
   if (process.env.MANUAL_START_DATE && process.env.MANUAL_END_DATE) {
-    clipsStartDate = new Date(process.env.MANUAL_START_DATE).toISOString();
-    clipsEndDate = new Date(process.env.MANUAL_END_DATE).toISOString();
-    votingStartDate = clipsStartDate;
-    votingEndDate = clipsEndDate;
+    // Manual override: use provided dates for clips
+    // Note: For manual runs, we still calculate the voting period separately
+    // to maintain the design that voting is in the last week of the month
+    const manualStart = new Date(process.env.MANUAL_START_DATE);
+    const manualEnd = new Date(process.env.MANUAL_END_DATE);
+    
+    clipsStartDate = manualStart.toISOString();
+    clipsEndDate = manualEnd.toISOString();
+    
+    // Calculate voting period for the month containing the manual end date
+    const endYear = manualEnd.getFullYear();
+    const endMonth = manualEnd.getMonth();
+    const votingPeriod = getLastWeekOfMonth(endYear, endMonth);
+    
+    votingStartDate = votingPeriod.start.toISOString();
+    votingEndDate = votingPeriod.end.toISOString();
   } else if (process.env.VOTING_START_DATE && process.env.VOTING_END_DATE) {
+    // Legacy environment variables: use as-is for backward compatibility
     clipsStartDate = new Date(process.env.VOTING_START_DATE).toISOString();
     clipsEndDate = new Date(process.env.VOTING_END_DATE).toISOString();
     votingStartDate = clipsStartDate;

@@ -18,19 +18,18 @@ function isInLastWeekOfMonth(date = new Date()) {
 function main() {
   const today = new Date();
   
-  // Check if we're in the last week of the month
-  if (!isInLastWeekOfMonth(today)) {
-    console.log('Not in the last week of the month yet, skipping calculation');
-    return;
-  }
-  
-  // Additionally, only calculate on the last day of the month for final results
+  // Only calculate results on the last day of the month
   const tomorrow = new Date(today);
   tomorrow.setDate(tomorrow.getDate() + 1);
   
   if (tomorrow.getDate() !== 1) {
     console.log('Not the last day of the month yet, skipping calculation');
     return;
+  }
+  
+  // Verify we're in the last week (sanity check, should always be true on last day)
+  if (!isInLastWeekOfMonth(today)) {
+    console.log('Warning: Last day of month but not in last week - this should not happen');
   }
   
   // Read clips
