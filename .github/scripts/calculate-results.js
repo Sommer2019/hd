@@ -1,6 +1,17 @@
 const fs = require('fs');
 
 function main() {
+  // Check if today is actually the last day of the month
+  const today = new Date();
+  const tomorrow = new Date(today);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  
+  // If tomorrow is not the 1st, we're not at the end of the month yet
+  if (tomorrow.getDate() !== 1) {
+    console.log('Not the last day of the month yet, skipping calculation');
+    return;
+  }
+  
   // Read clips
   const clipsPath = './votingData/clips.json';
   const clipsData = JSON.parse(fs.readFileSync(clipsPath, 'utf8'));
@@ -40,8 +51,9 @@ function main() {
       if (i === 9) {
         minVotesForTop10 = clipsWithVotes[i].votes;
       }
-    } else if (clipsWithVotes[i].votes === minVotesForTop10 && minVotesForTop10 > 0) {
-      // Include tied clips
+    } else if (minVotesForTop10 > 0 && clipsWithVotes[i].votes === minVotesForTop10) {
+      // Include clips tied with the 10th position
+      // Note: If position 10 has 0 votes, we don't include additional 0-vote clips
       results.push(clipsWithVotes[i]);
     } else {
       break;

@@ -3,6 +3,7 @@ name: Calculate Results
 on:
   schedule:
     # Run on the last day of each month at 23:55 UTC
+    # Note: This runs on days 28-31, the script should check if it's actually the last day
     - cron: '55 23 28-31 * *'
   workflow_dispatch:
 

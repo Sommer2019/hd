@@ -35,6 +35,8 @@
 
   // Fetch JSON data
   async function fetchJSON(url) {
+    // Add cache busting for development. In production, consider using proper
+    // HTTP cache headers (Cache-Control, ETag) for better performance
     const response = await fetch(url + '?t=' + Date.now());
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);

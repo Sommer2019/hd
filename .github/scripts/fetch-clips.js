@@ -115,7 +115,9 @@ async function main() {
   } else {
     // Default: previous month
     const now = new Date();
-    const firstDayLastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+    const year = now.getMonth() === 0 ? now.getFullYear() - 1 : now.getFullYear();
+    const month = now.getMonth() === 0 ? 11 : now.getMonth() - 1;
+    const firstDayLastMonth = new Date(year, month, 1);
     const lastDayLastMonth = new Date(now.getFullYear(), now.getMonth(), 0, 23, 59, 59);
     startDate = firstDayLastMonth.toISOString();
     endDate = lastDayLastMonth.toISOString();
