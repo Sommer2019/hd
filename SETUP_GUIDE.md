@@ -40,29 +40,31 @@ The voting system automatically activates based on the dates configured in `voti
 
 #### Automatic Monthly Cycle
 
-1. **Start of Month** (Day 1 at 00:00 UTC):
+1. **Around Day 22 of Each Month** (at 00:00 UTC):
    - `fetch-clips.yml` workflow runs automatically
-   - Fetches all clips from previous month
-   - Updates `votingData/clips.json`
-   - Updates `votingData/config.json` with new voting period dates
+   - Fetches clips from last week of previous month through second-to-last week of current month
+     - Example for January: clips from December 25 - January 24
+   - Updates `votingData/clips.json` with fetched clips
+   - Updates `votingData/config.json` with voting period set to last week of current month
+     - Example for January: voting period January 25 - January 31
 
-2. **During the Voting Period**:
+2. **During the Last Week of the Month** (approximately days 25-31):
    - Users visit ClipDesMonats.html
    - System checks current date against voting period
-   - If within period: shows voting interface
-   - They see all clips and can vote for one
+   - If within the last week: shows voting interface
+   - Users can browse and vote for one clip
    - Votes are stored in localStorage (one per browser)
 
-3. **End of Month** (Days 28-31 at 23:55 UTC):
+3. **Last Day of the Month** (Days 28-31 at 23:55 UTC):
    - `calculate-results.yml` workflow runs
-   - Checks if it's the last day of the month
+   - Checks if it's the last day of the month and in the last week
    - Calculates top 10 clips by votes
    - Updates `votingData/results.json`
 
-4. **After Voting Period Ends**:
+4. **After Voting Period Ends** (First ~3 weeks of next month):
    - Users automatically see results instead of voting interface
    - No manual status change needed - system checks dates automatically
-   - On day 1 of next month, new voting period begins when workflow updates dates
+   - Around day 22, new cycle begins when workflow runs
 
 ### 4. Manual Operations
 
@@ -111,9 +113,13 @@ votingData/
 
 ### 7. Customization
 
-#### Change Voting Period Duration
+#### Change Voting Period Duration or Timing
 
-Edit `.github/workflows/fetch-clips.yml` and `.github/workflows/calculate-results.yml` to change the schedule.
+The voting period is automatically calculated to be the last 7 days of each month, with clips from approximately the previous 4 weeks. To change this:
+
+1. Edit `.github/scripts/fetch-clips.js` - modify the `getLastWeekOfMonth()` and `calculateVotingAndClipsPeriods()` functions
+2. Edit `.github/workflows/fetch-clips.yml` - change the cron schedule (currently runs on day 22)
+3. Edit `.github/workflows/calculate-results.yml` - adjust if needed (currently runs on days 28-31)
 
 #### Change Twitch Channel
 

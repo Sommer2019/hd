@@ -25,10 +25,10 @@ Add the following secrets to your GitHub repository:
 The system includes three GitHub Actions workflows:
 
 #### Fetch Clips (`fetch-clips.yml`)
-- **Schedule**: Runs on the 1st of each month
+- **Schedule**: Runs on the 22nd of each month at 00:00 UTC (approximately start of last week)
 - **Manual trigger**: Can be triggered manually with custom date range
-- **Function**: Fetches all clips from the Twitch channel for the voting period
-- **Output**: Updates `votingData/clips.json` and `votingData/config.json`
+- **Function**: Fetches clips from the last week of the previous month through the second-to-last week of the current month
+- **Output**: Updates `votingData/clips.json` and `votingData/config.json` with voting period set to the last week of current month
 
 #### Submit Vote (`submit-vote.yml`)
 - **Trigger**: Via repository_dispatch event (for future integration)
@@ -36,20 +36,32 @@ The system includes three GitHub Actions workflows:
 - **Note**: Currently, votes are stored in localStorage on the client side
 
 #### Calculate Results (`calculate-results.yml`)
-- **Schedule**: Runs near the end of each month
+- **Schedule**: Runs on days 28-31 at 23:55 UTC (near the end of each month)
 - **Manual trigger**: Can be triggered manually
-- **Function**: Calculates top 10 clips based on votes
+- **Function**: Calculates top 10 clips based on votes (only runs on the last day of the month when in the last week)
 - **Output**: Updates `votingData/results.json` and sets config status to "closed"
 
 ### 3. Voting Period Configuration
 
 The voting period is **automatically enforced** based on the dates in `votingData/config.json`. The system checks the current date/time against the `votingPeriod.start` and `votingPeriod.end` fields to determine if voting should be active or if results should be displayed.
 
-The voting period dates can be set in three ways (in order of priority):
+#### Automatic Period Calculation
+
+By default, the system automatically calculates:
+
+- **Clips Period**: Last week of the previous month through the second-to-last week of the current month
+  - Example for January: December 25 - January 24
+  - This provides approximately 4 weeks of clips for voting
+  
+- **Voting Period**: The last week (7 days) of the current month
+  - Example for January: January 25 - January 31
+  - Voting is only active during this final week
+
+The voting period dates can be overridden in three ways (in order of priority):
 
 1. **Manual workflow dispatch**: Specify dates when manually triggering the fetch-clips workflow
 2. **GitHub Secrets**: Set `VOTING_START_DATE` and `VOTING_END_DATE`
-3. **Automatic**: Defaults to the previous calendar month
+3. **Automatic**: Uses the calculated periods as described above
 
 **Important**: The system automatically switches between voting and results display based on the current date. No manual status changes are required.
 
@@ -93,11 +105,25 @@ Optionally, to manually calculate results:
 
 #### Resetting for Next Month
 
-The system automatically handles monthly cycles:
-- On the 1st of each month: clips are fetched and voting period dates are updated
-- During the voting period: users can vote (dates checked automatically)
-- After voting period ends: results are automatically displayed
-- Near the end of the month: results are calculated by the workflow
+The system automatically handles monthly cycles with the new weekly periods:
+
+- **Around the 22nd of each month**: 
+  - `fetch-clips.yml` workflow runs automatically
+  - Fetches clips from last week of previous month through second-to-last week of current month
+  - Updates voting period dates to the last week of current month in `votingData/config.json`
+  
+- **During the last week of the month (days 25-31)**:
+  - Users can vote on clips
+  - System automatically shows voting interface during this period
+  
+- **On the last day of the month**:
+  - `calculate-results.yml` workflow runs automatically
+  - Calculates top 10 clips by votes
+  - Updates `votingData/results.json`
+  
+- **After voting period ends (first 3 weeks of next month)**:
+  - Users automatically see results
+  - System waits for next cycle to begin around the 22nd
 
 ## Technical Details
 
