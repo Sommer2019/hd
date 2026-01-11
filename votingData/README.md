@@ -43,11 +43,15 @@ The system includes three GitHub Actions workflows:
 
 ### 3. Voting Period Configuration
 
-The voting period can be configured in three ways (in order of priority):
+The voting period is **automatically enforced** based on the dates in `votingData/config.json`. The system checks the current date/time against the `votingPeriod.start` and `votingPeriod.end` fields to determine if voting should be active or if results should be displayed.
+
+The voting period dates can be set in three ways (in order of priority):
 
 1. **Manual workflow dispatch**: Specify dates when manually triggering the fetch-clips workflow
 2. **GitHub Secrets**: Set `VOTING_START_DATE` and `VOTING_END_DATE`
 3. **Automatic**: Defaults to the previous calendar month
+
+**Important**: The system automatically switches between voting and results display based on the current date. No manual status changes are required.
 
 ### 4. File Structure
 
@@ -74,18 +78,26 @@ votingData/
 
 1. Go to Actions → Fetch Twitch Clips
 2. Click "Run workflow"
-3. (Optional) Specify custom start/end dates
-4. The workflow will fetch clips and activate voting
+3. (Optional) Specify custom start/end dates, or use secrets `VOTING_START_DATE` and `VOTING_END_DATE`
+4. The workflow will fetch clips and update the voting period dates in config.json
+5. Voting becomes active automatically when the current date is within the period
 
 #### Ending a Voting Period
 
+Voting automatically ends when the current date/time passes the `votingPeriod.end` date. Users will automatically see results instead of the voting interface.
+
+Optionally, to manually calculate results:
 1. Go to Actions → Calculate Results
 2. Click "Run workflow"
-3. The workflow will calculate top 10 and close voting
+3. The workflow will calculate top 10 results
 
 #### Resetting for Next Month
 
-The system automatically handles monthly cycles. On the 1st of each month, clips are fetched and voting opens. Near the end of the month, results are calculated and voting closes.
+The system automatically handles monthly cycles:
+- On the 1st of each month: clips are fetched and voting period dates are updated
+- During the voting period: users can vote (dates checked automatically)
+- After voting period ends: results are automatically displayed
+- Near the end of the month: results are calculated by the workflow
 
 ## Technical Details
 
@@ -116,6 +128,8 @@ To implement proper IP-based voting verification:
   "status": "active"
 }
 ```
+
+**Note**: The `status` field is maintained for backward compatibility but is not actively used. The system automatically determines voting status by comparing the current date/time against `votingPeriod.start` and `votingPeriod.end`.
 
 #### clips.json
 ```json

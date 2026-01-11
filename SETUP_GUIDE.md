@@ -31,16 +31,25 @@ If you don't set the dates, the system will automatically use the previous calen
 
 ### 3. How It Works
 
+#### Automatic Date-Based Voting
+
+The voting system automatically activates based on the dates configured in `votingData/config.json`:
+
+- **Voting Active**: When current date/time is between `votingPeriod.start` and `votingPeriod.end`
+- **Results Display**: When current date/time is outside the voting period
+
 #### Automatic Monthly Cycle
 
 1. **Start of Month** (Day 1 at 00:00 UTC):
    - `fetch-clips.yml` workflow runs automatically
    - Fetches all clips from previous month
    - Updates `votingData/clips.json`
-   - Sets voting status to "active"
+   - Updates `votingData/config.json` with new voting period dates
 
-2. **During the Month**:
+2. **During the Voting Period**:
    - Users visit ClipDesMonats.html
+   - System checks current date against voting period
+   - If within period: shows voting interface
    - They see all clips and can vote for one
    - Votes are stored in localStorage (one per browser)
 
@@ -49,11 +58,11 @@ If you don't set the dates, the system will automatically use the previous calen
    - Checks if it's the last day of the month
    - Calculates top 10 clips by votes
    - Updates `votingData/results.json`
-   - Sets voting status to "closed"
 
-4. **Next Month**:
-   - Users see the results from previous month
-   - On day 1, new voting period begins automatically
+4. **After Voting Period Ends**:
+   - Users automatically see results instead of voting interface
+   - No manual status change needed - system checks dates automatically
+   - On day 1 of next month, new voting period begins when workflow updates dates
 
 ### 4. Manual Operations
 

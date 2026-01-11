@@ -17,8 +17,14 @@
       // Load configuration
       currentConfig = await fetchJSON(CONFIG_URL);
       
+      // Check if voting is currently active based on date/time
+      const now = new Date();
+      const votingStart = new Date(currentConfig.votingPeriod.start);
+      const votingEnd = new Date(currentConfig.votingPeriod.end);
+      const isVotingActive = now >= votingStart && now <= votingEnd;
+      
       // Check voting status
-      if (currentConfig.status === 'active') {
+      if (isVotingActive) {
         // Load clips and show voting interface
         currentClips = await fetchJSON(CLIPS_URL);
         await showVotingInterface();
