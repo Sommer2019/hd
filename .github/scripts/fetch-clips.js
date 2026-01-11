@@ -90,6 +90,54 @@ async function getClips(broadcasterId, startDate, endDate, accessToken, clientId
   return allClips;
 }
 
+function getLastWeekOfMonth(year, month) {
+  // month is 0-indexed (0 = January, 11 = December)
+  // Get the last day of the month
+  const lastDay = new Date(year, month + 1, 0);
+  const lastDayOfMonth = lastDay.getDate();
+  
+  // Calculate the start of the last week (7 days before the last day)
+  const startOfLastWeek = new Date(year, month, lastDayOfMonth - 6, 0, 0, 0, 0);
+  const endOfLastWeek = new Date(year, month, lastDayOfMonth, 23, 59, 59, 999);
+  
+  return { start: startOfLastWeek, end: endOfLastWeek };
+}
+
+function getSecondToLastWeekOfMonth(year, month) {
+  // month is 0-indexed
+  // Get the last day of the month
+  const lastDay = new Date(year, month + 1, 0);
+  const lastDayOfMonth = lastDay.getDate();
+  
+  // The second-to-last week ends 7 days before the last day
+  const endOfSecondToLastWeek = new Date(year, month, lastDayOfMonth - 7, 23, 59, 59, 999);
+  
+  return { end: endOfSecondToLastWeek };
+}
+
+function calculateVotingAndClipsPeriods(referenceDate = new Date()) {
+  const year = referenceDate.getFullYear();
+  const month = referenceDate.getMonth(); // 0-indexed
+  
+  // Voting period: Last week of current month
+  const votingPeriod = getLastWeekOfMonth(year, month);
+  
+  // Clips period: Last week of previous month through second-to-last week of current month
+  const prevMonth = month === 0 ? 11 : month - 1;
+  const prevYear = month === 0 ? year - 1 : year;
+  
+  const clipsStart = getLastWeekOfMonth(prevYear, prevMonth).start;
+  const clipsEnd = getSecondToLastWeekOfMonth(year, month).end;
+  
+  return {
+    votingPeriod,
+    clipsPeriod: {
+      start: clipsStart,
+      end: clipsEnd
+    }
+  };
+}
+
 async function main() {
   const clientId = process.env.TWITCH_CLIENT_ID;
   const clientSecret = process.env.TWITCH_CLIENT_SECRET;
@@ -104,26 +152,33 @@ async function main() {
   const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
   
   // Determine date range
-  let startDate, endDate;
+  let clipsStartDate, clipsEndDate, votingStartDate, votingEndDate;
   
   if (process.env.MANUAL_START_DATE && process.env.MANUAL_END_DATE) {
-    startDate = new Date(process.env.MANUAL_START_DATE).toISOString();
-    endDate = new Date(process.env.MANUAL_END_DATE).toISOString();
+    clipsStartDate = new Date(process.env.MANUAL_START_DATE).toISOString();
+    clipsEndDate = new Date(process.env.MANUAL_END_DATE).toISOString();
+    votingStartDate = clipsStartDate;
+    votingEndDate = clipsEndDate;
   } else if (process.env.VOTING_START_DATE && process.env.VOTING_END_DATE) {
-    startDate = new Date(process.env.VOTING_START_DATE).toISOString();
-    endDate = new Date(process.env.VOTING_END_DATE).toISOString();
+    clipsStartDate = new Date(process.env.VOTING_START_DATE).toISOString();
+    clipsEndDate = new Date(process.env.VOTING_END_DATE).toISOString();
+    votingStartDate = clipsStartDate;
+    votingEndDate = clipsEndDate;
   } else {
-    // Default: previous month
+    // Default: Calculate based on current date
+    // Clips: last week of previous month through second-to-last week of current month
+    // Voting: last week of current month
     const now = new Date();
-    const year = now.getMonth() === 0 ? now.getFullYear() - 1 : now.getFullYear();
-    const month = now.getMonth() === 0 ? 11 : now.getMonth() - 1;
-    const firstDayLastMonth = new Date(year, month, 1);
-    const lastDayLastMonth = new Date(now.getFullYear(), now.getMonth(), 0, 23, 59, 59);
-    startDate = firstDayLastMonth.toISOString();
-    endDate = lastDayLastMonth.toISOString();
+    const periods = calculateVotingAndClipsPeriods(now);
+    
+    clipsStartDate = periods.clipsPeriod.start.toISOString();
+    clipsEndDate = periods.clipsPeriod.end.toISOString();
+    votingStartDate = periods.votingPeriod.start.toISOString();
+    votingEndDate = periods.votingPeriod.end.toISOString();
   }
   
-  console.log(`Fetching clips from ${startDate} to ${endDate}`);
+  console.log(`Fetching clips from ${clipsStartDate} to ${clipsEndDate}`);
+  console.log(`Voting period will be from ${votingStartDate} to ${votingEndDate}`);
   
   // Get access token
   const accessToken = await getAccessToken(clientId, clientSecret);
@@ -133,7 +188,7 @@ async function main() {
   console.log(`Broadcaster ID: ${broadcasterId}`);
   
   // Fetch clips
-  const clips = await getClips(broadcasterId, startDate, endDate, accessToken, clientId);
+  const clips = await getClips(broadcasterId, clipsStartDate, clipsEndDate, accessToken, clientId);
   console.log(`Fetched ${clips.length} clips`);
   
   // Save clips
@@ -158,8 +213,8 @@ async function main() {
     })),
     fetchedAt: new Date().toISOString(),
     period: {
-      start: startDate,
-      end: endDate
+      start: clipsStartDate,
+      end: clipsEndDate
     }
   };
   
@@ -167,8 +222,8 @@ async function main() {
   
   // Update config with voting period
   config.votingPeriod = {
-    start: startDate,
-    end: endDate
+    start: votingStartDate,
+    end: votingEndDate
   };
   config.status = 'active';
   
