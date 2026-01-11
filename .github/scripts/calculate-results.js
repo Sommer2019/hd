@@ -1,20 +1,5 @@
 const fs = require('fs');
 
-function isInLastWeekOfMonth(date = new Date()) {
-  const year = date.getFullYear();
-  const month = date.getMonth();
-  
-  // Get the last day of the month
-  const lastDay = new Date(year, month + 1, 0);
-  const lastDayOfMonth = lastDay.getDate();
-  const currentDay = date.getDate();
-  
-  // Last week is the last 7 days of the month
-  const startOfLastWeek = lastDayOfMonth - 6;
-  
-  return currentDay >= startOfLastWeek;
-}
-
 function main() {
   const today = new Date();
   
@@ -25,11 +10,6 @@ function main() {
   if (tomorrow.getDate() !== 1) {
     console.log('Not the last day of the month yet, skipping calculation');
     return;
-  }
-  
-  // Verify we're in the last week (sanity check, should always be true on last day)
-  if (!isInLastWeekOfMonth(today)) {
-    console.log('Warning: Last day of month but not in last week - this should not happen');
   }
   
   // Read clips
