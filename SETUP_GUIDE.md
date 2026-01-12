@@ -33,10 +33,13 @@ If you don't set the dates, the system will automatically use the previous calen
 
 #### Automatic Date-Based Voting
 
-The voting system automatically activates based on the dates configured in `votingData/config.json`:
+The voting system **automatically activates during the last week of each month** (last 7 days). No manual configuration needed:
 
-- **Voting Active**: When current date/time is between `votingPeriod.start` and `votingPeriod.end`
-- **Results Display**: When current date/time is outside the voting period
+- **Voting Active**: Automatically active during the last week of the current month (e.g., January 25-31)
+- **Results Display**: Automatically shown during the first ~3 weeks of the month
+- **No Config Updates Required**: The system calculates the voting period dynamically based on the current date
+
+The `votingData/config.json` file is updated by workflows for informational purposes, but the voting activation is determined automatically by date calculation.
 
 #### Automatic Monthly Cycle
 
@@ -50,10 +53,10 @@ The voting system automatically activates based on the dates configured in `voti
 
 2. **During the Last Week of the Month** (approximately days 25-31):
    - Users visit ClipDesMonats.html
-   - System checks current date against voting period
-   - If within the last week: shows voting interface
+   - System automatically detects it's the last week and shows voting interface
    - Users can browse and vote for one clip
    - Votes are stored in localStorage (one per browser)
+   - No manual status change needed - completely automatic
 
 3. **Last Day of the Month** (Days 28-31 at 23:55 UTC):
    - `calculate-results.yml` workflow runs
@@ -115,11 +118,13 @@ votingData/
 
 #### Change Voting Period Duration or Timing
 
-The voting period is automatically calculated to be the last 7 days of each month, with clips from approximately the previous 4 weeks. To change this:
+The voting period is automatically calculated to be the last 7 days of each month. To change when voting is active:
 
-1. Edit `.github/scripts/fetch-clips.js` - modify the `getLastWeekOfMonth()` and `calculateVotingAndClipsPeriods()` functions
-2. Edit `.github/workflows/fetch-clips.yml` - change the cron schedule (currently runs on day 22)
-3. Edit `.github/workflows/calculate-results.yml` - adjust if needed (currently runs on days 28-31)
+1. Edit `js/clip-voting.js` - modify the `getLastWeekOfMonth()` function to change which days are considered "voting days"
+2. Edit `.github/scripts/submit-vote.js` - make the same changes to keep backend validation in sync
+3. Edit `.github/scripts/fetch-clips.js` - modify if you want to change which clips are fetched
+4. Edit `.github/workflows/fetch-clips.yml` - change the cron schedule (currently runs on day 22)
+5. Edit `.github/workflows/calculate-results.yml` - adjust if needed (currently runs on days 28-31)
 
 #### Change Twitch Channel
 
@@ -158,13 +163,14 @@ For true IP-based voting, you would need to add a serverless backend (e.g., Clou
 
 **Q: Voting doesn't work**
 - Check browser console for errors
-- Verify `config.json` has `"status": "active"`
+- Verify the current date is in the last week of the month (system auto-activates)
 - Try clearing localStorage and refreshing
+- Check if `votingData/clips.json` has clips available
 
 **Q: Results not showing**
 - Check if `votingData/results.json` exists and has data
 - Verify calculate-results workflow ran successfully
-- Check that `config.json` has `"status": "closed"`
+- Ensure the current date is NOT in the last week of the month (results show automatically when voting period ends)
 
 **Q: Workflow not running automatically**
 - Check that GitHub Actions are enabled in repository settings

@@ -1,4 +1,5 @@
 {
+  "_comment": "Voting is automatically active during the last week of each month. The votingPeriod field is updated by the fetch-clips workflow for informational purposes only.",
   "votingPeriod": {
     "start": "2026-01-01T00:00:00Z",
     "end": "2026-01-31T23:59:59Z"
