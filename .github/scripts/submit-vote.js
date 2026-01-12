@@ -1,5 +1,8 @@
 const fs = require('fs');
 
+// Constants for voting period calculation
+const VOTING_PERIOD_DAYS = 7; // Last 7 days of the month
+
 // Calculate the last week of the current month
 function getLastWeekOfMonth(referenceDate = new Date()) {
   const year = referenceDate.getFullYear();
@@ -9,8 +12,8 @@ function getLastWeekOfMonth(referenceDate = new Date()) {
   const lastDay = new Date(year, month + 1, 0);
   const lastDayOfMonth = lastDay.getDate();
   
-  // Calculate the start of the last week (7 days before the last day)
-  const startOfLastWeek = new Date(year, month, lastDayOfMonth - 6, 0, 0, 0, 0);
+  // Calculate the start of the last week (VOTING_PERIOD_DAYS before the last day)
+  const startOfLastWeek = new Date(year, month, lastDayOfMonth - (VOTING_PERIOD_DAYS - 1), 0, 0, 0, 0);
   const endOfLastWeek = new Date(year, month, lastDayOfMonth, 23, 59, 59, 999);
   
   return { start: startOfLastWeek, end: endOfLastWeek };
