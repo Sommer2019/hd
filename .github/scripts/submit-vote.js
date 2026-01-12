@@ -1,5 +1,27 @@
 const fs = require('fs');
 
+// Calculate the last week of the current month
+function getLastWeekOfMonth(referenceDate = new Date()) {
+  const year = referenceDate.getFullYear();
+  const month = referenceDate.getMonth();
+  
+  // Get the last day of the month
+  const lastDay = new Date(year, month + 1, 0);
+  const lastDayOfMonth = lastDay.getDate();
+  
+  // Calculate the start of the last week (7 days before the last day)
+  const startOfLastWeek = new Date(year, month, lastDayOfMonth - 6, 0, 0, 0, 0);
+  const endOfLastWeek = new Date(year, month, lastDayOfMonth, 23, 59, 59, 999);
+  
+  return { start: startOfLastWeek, end: endOfLastWeek };
+}
+
+// Check if current date is in the last week of the month
+function isInLastWeekOfMonth(now = new Date()) {
+  const lastWeek = getLastWeekOfMonth(now);
+  return now >= lastWeek.start && now <= lastWeek.end;
+}
+
 function main() {
   const clipId = process.env.CLIP_ID;
   const ipHash = process.env.IP_HASH;
@@ -13,12 +35,12 @@ function main() {
   const configPath = './votingData/config.json';
   const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
   
-  // Check if voting is active
+  // Check if voting is active (automatically active during last week of month)
   const now = new Date();
-  const votingEnd = new Date(config.votingPeriod.end);
+  const isVotingActive = isInLastWeekOfMonth(now);
   
-  if (config.status !== 'active' || now > votingEnd) {
-    console.log('Voting period has ended');
+  if (!isVotingActive) {
+    console.log('Voting is not active (not in the last week of the month)');
     process.exit(1);
   }
   

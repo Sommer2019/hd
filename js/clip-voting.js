@@ -11,17 +11,38 @@
   let currentClips = null;
   let currentResults = null;
 
+  // Calculate the last week of the current month
+  function getLastWeekOfMonth(referenceDate = new Date()) {
+    const year = referenceDate.getFullYear();
+    const month = referenceDate.getMonth();
+    
+    // Get the last day of the month
+    const lastDay = new Date(year, month + 1, 0);
+    const lastDayOfMonth = lastDay.getDate();
+    
+    // Calculate the start of the last week (7 days before the last day)
+    const startOfLastWeek = new Date(year, month, lastDayOfMonth - 6, 0, 0, 0, 0);
+    const endOfLastWeek = new Date(year, month, lastDayOfMonth, 23, 59, 59, 999);
+    
+    return { start: startOfLastWeek, end: endOfLastWeek };
+  }
+
+  // Check if current date is in the last week of the month
+  function isInLastWeekOfMonth(now = new Date()) {
+    const lastWeek = getLastWeekOfMonth(now);
+    return now >= lastWeek.start && now <= lastWeek.end;
+  }
+
   // Initialize the voting system
   async function init() {
     try {
       // Load configuration
       currentConfig = await fetchJSON(CONFIG_URL);
       
-      // Check if voting is currently active based on date/time
+      // Check if voting is currently active
+      // Voting is automatically active during the last week of each month
       const now = new Date();
-      const votingStart = new Date(currentConfig.votingPeriod.start);
-      const votingEnd = new Date(currentConfig.votingPeriod.end);
-      const isVotingActive = now >= votingStart && now <= votingEnd;
+      const isVotingActive = isInLastWeekOfMonth(now);
       
       // Check voting status
       if (isVotingActive) {
@@ -63,9 +84,10 @@
       return;
     }
 
-    // Show voting period info
-    const startDate = new Date(currentConfig.votingPeriod.start);
-    const endDate = new Date(currentConfig.votingPeriod.end);
+    // Calculate and show voting period info (automatically last week of current month)
+    const votingPeriod = getLastWeekOfMonth();
+    const startDate = votingPeriod.start;
+    const endDate = votingPeriod.end;
     
     const header = document.createElement('div');
     header.className = 'voting-header';
