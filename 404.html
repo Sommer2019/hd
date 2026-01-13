@@ -1,0 +1,32 @@
+<script>
+    (async function() {
+        const currentURL = window.location.href;
+        const lowerCaseURL = currentURL.toLowerCase();
+
+        // Schritt 1: Prüfen, ob die URL bereits kleingeschrieben ist
+        if (currentURL !== lowerCaseURL) {
+            try {
+                // Schritt 2: Prüfen, ob die kleingeschriebene URL existiert
+                const response = await fetch(lowerCaseURL, { method: 'HEAD' });
+
+                if (response.ok) {
+                    // Falls sie existiert -> Weiterleiten
+                    window.location.replace(lowerCaseURL);
+                    return;
+                }
+            } catch (e) {
+                console.error("Check failed", e);
+            }
+        }
+
+        // Schritt 3: Falls sie NICHT existiert oder bereits klein war:
+        // Zeige hier deine normale "Seite nicht gefunden" Nachricht an
+        document.getElementById('error-message').style.display = 'block';
+    })();
+</script>
+
+<div id="error-message" style="display:none;">
+    <h1>Hoppla! Diese Seite existiert wirklich nicht.</h1>
+    <p>Zurück zur <a href="/">Startseite</a>.</p>
+</div>
+
