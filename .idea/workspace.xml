@@ -4,16 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="00c35883-868f-4c61-99bc-64796ad3d22a" name="Changes" comment="Update meta title in multiple HTML files to reflect branding change">
-      <change afterPath="$PROJECT_DIR$/ClipDesMonats.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/img/CDM.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/votingData/FromTo" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/StreamElements.html" beforeDir="false" afterPath="$PROJECT_DIR$/StreamElements.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Streamplan.html" beforeDir="false" afterPath="$PROJECT_DIR$/Streamplan.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/css/styles.css" beforeDir="false" afterPath="$PROJECT_DIR$/css/styles.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/impressum.html" beforeDir="false" afterPath="$PROJECT_DIR$/Impressum.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/index.html" afterDir="false" />
-    </list>
+    <list default="true" id="00c35883-868f-4c61-99bc-64796ad3d22a" name="Changes" comment="Add initial voting page and related assets" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -126,7 +117,7 @@
       <workItem from="1768056383395" duration="2668000" />
       <workItem from="1768062115141" duration="729000" />
       <workItem from="1768132702773" duration="304000" />
-      <workItem from="1768141980214" duration="502000" />
+      <workItem from="1768141980214" duration="1513000" />
     </task>
     <task id="LOCAL-00001" summary="Add initial website files including index, impressum, and styles">
       <option name="closed" value="true" />
@@ -240,7 +231,15 @@
       <option name="project" value="LOCAL" />
       <updated>1768059313675</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="Add initial voting page and related assets">
+      <option name="closed" value="true" />
+      <created>1768142802602</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1768142802604</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -271,7 +270,8 @@
     <MESSAGE value="Update workspace.xml to modify change list and fix XML formatting" />
     <MESSAGE value="Update posts.html to enhance layout and improve user interface elements" />
     <MESSAGE value="Update meta title in multiple HTML files to reflect branding change" />
-    <option name="LAST_COMMIT_MESSAGE" value="Update meta title in multiple HTML files to reflect branding change" />
+    <MESSAGE value="Add initial voting page and related assets" />
+    <option name="LAST_COMMIT_MESSAGE" value="Add initial voting page and related assets" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
