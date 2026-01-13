@@ -1,16 +1,33 @@
 <script>
     (async function() {
+        const path = window.location.pathname.toLowerCase().replace(/\/$/, ""); // Pfad ohne / am Ende
         const currentURL = window.location.href;
-        const lowerCaseURL = currentURL.toLowerCase();
 
-        // Schritt 1: Prüfen, ob die URL bereits kleingeschrieben ist
+        // 1. Definition deiner Fremdlinks (Mapping)
+        const redirects = {
+            "/instagram": "https://github.com/dein-nutzername",
+            "/insta":  "https://instagram.com/dein-profil",
+            "/yt":  "https://instagram.com/dein-profil",
+            "/youtube":  "https://instagram.com/dein-profil",
+            "/tiktok":  "https://instagram.com/dein-profil",
+            "/nclip":  "https://instagram.com/dein-profil",
+            "/puzzle":  "https://instagram.com/dein-profil",
+            "/tanggle":  "https://instagram.com/dein-profil",
+            "/discord":   "https://medium.com/@dein-blog"
+        };
+
+        // 2. Prüfen, ob der Pfad in der Mapping-Liste ist
+        if (redirects[path]) {
+            window.location.replace(redirects[path]);
+            return;
+        }
+
+        // 3. Wenn kein Fremdlink: Case-Insensitive Check für eigene Seiten
+        const lowerCaseURL = currentURL.toLowerCase();
         if (currentURL !== lowerCaseURL) {
             try {
-                // Schritt 2: Prüfen, ob die kleingeschriebene URL existiert
                 const response = await fetch(lowerCaseURL, { method: 'HEAD' });
-
                 if (response.ok) {
-                    // Falls sie existiert -> Weiterleiten
                     window.location.replace(lowerCaseURL);
                     return;
                 }
@@ -19,11 +36,11 @@
             }
         }
 
-        // Schritt 3: Falls sie NICHT existiert oder bereits klein war:
-        // Zeige hier deine normale "Seite nicht gefunden" Nachricht an
+        // 4. Wenn alles fehlschlägt: Fehler-Nachricht anzeigen
         document.getElementById('error-message').style.display = 'block';
     })();
 </script>
+
 
 <div id="error-message" style="display:none;">
     <h1>Hoppla! Diese Seite existiert wirklich nicht.</h1>
