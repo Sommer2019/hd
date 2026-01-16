@@ -17,7 +17,7 @@ async function clearClips(supabase) {
   const { error } = await supabase
     .from('clips')
     .delete()
-    .neq('id', '');  // Delete all records
+    .gte('id', 0);  // Delete all records (id is always >= 0)
   
   if (error) throw error;
 }
@@ -107,7 +107,7 @@ async function clearVotes(supabase) {
   const { error } = await supabase
     .from('votes')
     .delete()
-    .neq('id', '');  // Delete all records
+    .gte('id', 0);  // Delete all records (id is always >= 0)
   
   if (error) throw error;
 }
