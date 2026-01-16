@@ -31,11 +31,3 @@ jobs:
           SUPABASE_PUBLISHABLE_KEY: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
         run: |
           node .github/scripts/calculate-results.js
-
-      - name: Commit and push changes
-        run: |
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
-          git add votingData/results.json votingData/config.json
-          git diff --staged --quiet || git commit -m "Calculate voting results"
-          git push

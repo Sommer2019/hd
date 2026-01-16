@@ -81,33 +81,41 @@ ALTER TABLE results ENABLE ROW LEVEL SECURITY;
 
 -- RLS Policies
 
--- Clips: Allow public read access, service role for write
+-- Clips: Allow public read access, allow anon to manage clips (for GitHub Actions)
 CREATE POLICY "Allow public read access to clips"
     ON clips FOR SELECT
     USING (true);
 
-CREATE POLICY "Allow service role to manage clips"
-    ON clips FOR ALL
-    USING (auth.role() = 'service_role');
+CREATE POLICY "Allow anon role to insert clips"
+    ON clips FOR INSERT
+    WITH CHECK (true);
 
--- Votes: Allow public to insert (one per IP), service role for all operations
+CREATE POLICY "Allow anon role to delete clips"
+    ON clips FOR DELETE
+    USING (true);
+
+-- Votes: Allow public to insert and read, anon role can delete (for results calculation)
 CREATE POLICY "Allow users to insert their own vote"
     ON votes FOR INSERT
     WITH CHECK (true);
 
-CREATE POLICY "Allow users to read their own vote"
+CREATE POLICY "Allow users to check if IP has voted"
     ON votes FOR SELECT
     USING (true);
 
-CREATE POLICY "Allow service role to manage votes"
-    ON votes FOR ALL
-    USING (auth.role() = 'service_role');
+CREATE POLICY "Allow anon role to delete votes"
+    ON votes FOR DELETE
+    USING (true);
 
--- Results: Allow public read access, service role for write
+-- Results: Allow public read access, anon role can manage (for GitHub Actions)
 CREATE POLICY "Allow public read access to results"
     ON results FOR SELECT
     USING (true);
 
-CREATE POLICY "Allow service role to manage results"
-    ON results FOR ALL
-    USING (auth.role() = 'service_role');
+CREATE POLICY "Allow anon role to insert results"
+    ON results FOR INSERT
+    WITH CHECK (true);
+
+CREATE POLICY "Allow anon role to delete results"
+    ON results FOR DELETE
+    USING (true);

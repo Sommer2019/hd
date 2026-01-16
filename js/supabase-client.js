@@ -3,7 +3,7 @@
 
 // Supabase configuration - these should be safe to expose as they are public keys
 const SUPABASE_URL = 'https://itbmerllqlwoinsletkz.supabase.co';
-const SUPABASE_PUBLISHABLE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml0Ym1lcmxscWx3b2luc2xldGt6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzcwNTI4MDAsImV4cCI6MjA1MjYyODgwMH0.sb_publishable_SmpJqZVhHCpeMN-GUZgvzw_NKG1Rcgn';
+const SUPABASE_PUBLISHABLE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml0Ym1lcmxscWx3b2luc2xldGt6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzcwNTI4MDAsImV4cCI6MjA1MjYyODgwMH0.SmpJqZVhHCpeMN-GUZgvzw_NKG1Rcgn';
 
 // Initialize Supabase client using CDN
 let supabaseClient = null;
