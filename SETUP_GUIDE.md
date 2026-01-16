@@ -24,12 +24,25 @@ Add these secrets:
 
 - **TWITCH_CLIENT_ID**: Your Twitch Client ID
 - **TWITCH_CLIENT_SECRET**: Your Twitch Client Secret
+- **SUPABASE_URL**: Your Supabase project URL (e.g., `https://itbmerllqlwoinsletkz.supabase.co`)
+- **SUPABASE_PUBLISHABLE_KEY**: Your Supabase anon/public key
 - **VOTING_START_DATE** (optional): e.g., `2026-02-01`
 - **VOTING_END_DATE** (optional): e.g., `2026-02-28`
 
 If you don't set the dates, the system will automatically use the previous calendar month.
 
-### 3. How It Works
+### 3. Set Up Supabase Database
+
+The system now uses Supabase for data storage instead of JSON files:
+
+1. Create a Supabase project at https://supabase.com
+2. Copy your project URL and anon key to GitHub secrets (step 2 above)
+3. Run the SQL schema from `supabase-schema.sql` in the Supabase SQL Editor
+4. This creates three tables: `clips`, `votes`, and `results`
+
+See `SUPABASE_SETUP.md` for detailed setup instructions.
+
+### 4. How It Works
 
 #### Automatic Date-Based Voting
 
@@ -141,18 +154,22 @@ Edit `votingData/config.json`:
 - **Colors**: Edit `css/clip-voting.css`
 - **Text**: Edit `ClipDesMonats.html` and `js/clip-voting.js`
 
-### 8. Current Limitations
+### 8. Current Capabilities
 
-⚠️ **Important**: The current implementation uses **browser localStorage** for vote tracking. This means:
+✅ **IP-based Voting**: The system now uses IP addresses (hashed) for vote tracking:
 
-- Users can vote once per browser
-- Clearing browser data allows voting again
-- No true IP-based verification (GitHub Pages limitation)
+- Each IP address can vote once per voting period
+- IP is hashed using SHA-256 before storage for privacy
+- Votes are stored in Supabase database
+- Results are stored monthly and preserved
+- localStorage is used as backup for client-side duplicate prevention
 
-For true IP-based voting, you would need to add a serverless backend (e.g., Cloudflare Workers, Vercel Functions) that:
-1. Receives vote requests from the client
-2. Hashes the user's IP address
-3. Triggers the GitHub Actions workflow via API
+The system uses Supabase for all data storage:
+- **Clips**: Fetched from Twitch and stored in database
+- **Votes**: Tracked by IP hash in database
+- **Results**: Stored monthly in database (year/month indexed)
+
+For implementation details, see `MIGRATION.md` and `SUPABASE_SETUP.md`.
 
 ### 9. Troubleshooting
 
