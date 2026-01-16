@@ -59,7 +59,7 @@
       }
     } catch (error) {
       console.error('Error initializing voting system:', error);
-      showError('Fehler beim Laden der Voting-Daten. Bitte versuche es später erneut.');
+      showError('Es stehen aktuell keine Ergebnisse oder Clips zum Voting zur Verfügung. Bitte versuche es später erneut.');
     }
   }
 
@@ -151,15 +151,25 @@
     const watchBtn = document.createElement('a');
     watchBtn.href = clip.url;
     watchBtn.target = '_blank';
-    watchBtn.className = 'btn btn-secondary';
+    watchBtn.className = 'btn btn-primary';
     watchBtn.textContent = 'Clip ansehen';
-    
+
+    // Einbettungs-Button: erzeugt ein iframe, wenn möglich
+    const embedBtn = document.createElement('button');
+    embedBtn.className = 'btn btn-secondary embed-btn';
+    embedBtn.textContent = 'Einbetten/Abspielen';
+    embedBtn.onclick = (e) => {
+      e.preventDefault();
+      toggleEmbed(card, clip);
+    };
+
     info.appendChild(title);
     info.appendChild(meta);
     info.appendChild(creator);
     info.appendChild(voteBtn);
     info.appendChild(watchBtn);
-    
+    info.appendChild(embedBtn);
+
     card.appendChild(thumbnail);
     card.appendChild(info);
     
@@ -192,7 +202,7 @@
   }
 
   // Show voted message
-  function showVotedMessage(clipId) {
+  function showVotedMessage() {
     const container = document.getElementById('voting-container');
     if (!container) return;
     
@@ -216,7 +226,9 @@
     if (!container) return;
 
     if (!currentResults || !currentResults.results || currentResults.results.length === 0) {
-      showError('Noch keine Ergebnisse verfügbar.');
+      // Wenn keine Ergebnisse vorhanden sind und Voting nicht aktiv ist,
+      // zeigen wir eine spezifische, hilfreiche Meldung an.
+      showNoResultsMessage();
       return;
     }
 
@@ -239,6 +251,28 @@
     });
     
     container.appendChild(resultsGrid);
+  }
+
+  // Zeige eine freundliche Meldung, wenn es keine Ergebnisse für den letzten Monat gibt
+  function showNoResultsMessage() {
+    const container = document.getElementById('voting-container');
+    if (!container) return;
+
+    container.innerHTML = '';
+
+    const message = document.createElement('div');
+    message.className = 'no-results-message';
+    // Hinweis: Wir verwenden hier eine allgemeine Formulierung — die Seite wird
+    // beim Hosting die korrekte Domain als parent für Twitch-Embeds benötigen.
+    message.innerHTML = `
+      <h2>ℹ️ Noch keine Ergebnisse für den letzten Monat</h2>
+      <p>Für den letzten Monat sind derzeit noch keine Ergebnisse verfügbar.</p>
+      <p>Das Voting ist aktuell nicht aktiv. Das Voting findet jeweils in der letzten Woche des Monats statt.</p>
+      <p>Schau bitte kurz vor Monatsende wieder vorbei — dann wird das Voting automatisch aktiviert.</p>
+      <p class="note">Wenn du Clips einsehen möchtest, nutze die "Clip ansehen"-Schaltfläche neben jedem Eintrag oder lade die Seite neu, sobald neue Daten vorhanden sind.</p>
+    `;
+
+    container.appendChild(message);
   }
 
   // Create result card
@@ -283,18 +317,103 @@
     watchBtn.target = '_blank';
     watchBtn.className = 'btn btn-primary';
     watchBtn.textContent = 'Clip ansehen';
-    
+
+    // Einbettungs-Button: erzeugt ein iframe, wenn möglich
+    const embedBtn = document.createElement('button');
+    embedBtn.className = 'btn btn-secondary embed-btn';
+    embedBtn.textContent = 'Einbetten/Abspielen';
+    embedBtn.onclick = (e) => {
+      e.preventDefault();
+      toggleEmbed(card, clip);
+    };
+
     info.appendChild(title);
     info.appendChild(votes);
     info.appendChild(meta);
     info.appendChild(creator);
     info.appendChild(watchBtn);
-    
+    info.appendChild(embedBtn);
+
     card.appendChild(rankBadge);
     card.appendChild(thumbnail);
     card.appendChild(info);
     
     return card;
+  }
+
+  // Toggle embed iframe inside the card. Wenn bereits ein iframe existiert, entferne es.
+  function toggleEmbed(container, clip) {
+    const existing = container.querySelector('.clip-embed');
+    if (existing) {
+      existing.remove();
+      return;
+    }
+
+    const embedContainer = document.createElement('div');
+    embedContainer.className = 'clip-embed';
+    embedContainer.style.marginTop = '10px';
+    embedContainer.style.width = '100%';
+    embedContainer.style.height = '360px';
+
+    // Erzeuge iframe (verwende embed_url wenn vorhanden)
+    const iframe = createEmbedIframe(clip);
+    if (!iframe) {
+      // Fallback: öffne Clip in neuem Tab
+      window.open(clip.url, '_blank');
+      return;
+    }
+
+    embedContainer.appendChild(iframe);
+    container.appendChild(embedContainer);
+  }
+
+  // Erzeugt ein iframe-Element für den Clip. Wenn nicht möglich, return null.
+  function createEmbedIframe(clip) {
+    try {
+      const iframe = document.createElement('iframe');
+      iframe.setAttribute('allowfullscreen', '');
+      iframe.setAttribute('frameborder', '0');
+      iframe.style.width = '100%';
+      iframe.style.height = '100%';
+
+      // Priorität: clip.embed_url, sonst versuchen wir spezifische Hosts zu behandeln
+      if (clip.embed_url) {
+        iframe.src = clip.embed_url;
+        return iframe;
+      }
+
+      const url = clip.url || '';
+      // Twitch clips: https://clips.twitch.tv/<slug>
+      if (url.includes('clips.twitch.tv')) {
+        // Für Twitch benötigt das Embed den `parent`-Parameter. Wir nutzen hostname.
+        const slug = url.split('/').pop();
+        const parent = window.location.hostname || 'localhost';
+        iframe.src = `https://clips.twitch.tv/embed?clip=${encodeURIComponent(slug)}&parent=${encodeURIComponent(parent)}`;
+        return iframe;
+      }
+
+      // YouTube short (youtu.be) oder watch?v= -> normale Einbettung
+      if (url.includes('youtube.com') || url.includes('youtu.be')) {
+        // Extrahiere Video-ID
+        let id;
+        if (url.includes('youtu.be/')) {
+          id = url.split('youtu.be/')[1].split(/[?&]/)[0];
+        } else {
+          const m = url.match(/[?&]v=([^&]+)/);
+          id = m && m[1];
+        }
+        if (id) {
+          iframe.src = `https://www.youtube.com/embed/${encodeURIComponent(id)}`;
+          return iframe;
+        }
+      }
+
+      // Fallback: wir können die URL nicht sicher einbetten
+      return null;
+    } catch (err) {
+      console.error('Embed creation failed', err);
+      return null;
+    }
   }
 
   // Show error message
