@@ -2,6 +2,16 @@
 
 This guide explains how to set up the Supabase database for the clip voting system.
 
+## ⚠️ Quick Setup Checklist
+
+Before the system will work, you MUST:
+
+1. ✅ Create a Supabase project at https://supabase.com
+2. ✅ Run `supabase-schema.sql` in Supabase SQL Editor
+3. ✅ Get your anon key from Supabase dashboard (Settings → API)
+4. ✅ Update `js/supabase-client.js` with your actual anon key
+5. ✅ Add GitHub secrets (SUPABASE_URL and SUPABASE_PUBLISHABLE_KEY)
+
 ## Prerequisites
 
 - Supabase account
@@ -11,10 +21,26 @@ This guide explains how to set up the Supabase database for the clip voting syst
 
 ### Database URL and Key
 
-The following values are already configured in the code:
+You need to configure the following values from your Supabase project:
 
-- **SUPABASE_URL**: `https://itbmerllqlwoinsletkz.supabase.co`
-- **SUPABASE_PUBLISHABLE_KEY**: Your Supabase anon/public key (for frontend)
+- **SUPABASE_URL**: `https://itbmerllqlwoinsletkz.supabase.co` (already set in code)
+- **SUPABASE_PUBLISHABLE_KEY**: Get from Supabase dashboard (see below)
+
+### How to Get Your Supabase Anon Key
+
+1. Go to your Supabase project dashboard
+2. Click on **Settings** (gear icon in sidebar)
+3. Click on **API** in the settings menu
+4. Under "Project API keys", copy the **anon/public** key
+5. This key starts with `eyJ...` and is a JWT token
+
+### Update Frontend Configuration
+
+⚠️ **IMPORTANT**: You must update `js/supabase-client.js` with your actual anon key:
+
+```javascript
+const SUPABASE_PUBLISHABLE_KEY = 'eyJ...'; // Paste your anon key here
+```
 
 ### GitHub Secrets Setup
 

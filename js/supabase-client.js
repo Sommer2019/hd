@@ -3,9 +3,10 @@
 
 // Supabase configuration - these are PUBLIC keys that are safe to expose in client-side code
 // The publishable/anon key is designed to be used in browser applications
-// These values are from the problem statement and are intentionally hardcoded for client-side use
+// ⚠️ IMPORTANT: Replace SUPABASE_PUBLISHABLE_KEY with your actual anon key from Supabase dashboard
+// Go to: Supabase Project Settings → API → Project API keys → anon/public key
 const SUPABASE_URL = 'https://itbmerllqlwoinsletkz.supabase.co';
-const SUPABASE_PUBLISHABLE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml0Ym1lcmxscWx3b2luc2xldGt6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzcwNTI4MDAsImV4cCI6MjA1MjYyODgwMH0.SmpJqZVhHCpeMN-GUZgvzw_NKG1Rcgn';
+const SUPABASE_PUBLISHABLE_KEY = 'YOUR_SUPABASE_ANON_KEY_HERE'; // Replace with actual key from Supabase dashboard
 
 // Initialize Supabase client using CDN
 let supabaseClient = null;
