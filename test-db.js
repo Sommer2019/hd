@@ -5,9 +5,15 @@ async function testConnection() {
   try {
     console.log('Testing Supabase connection...');
     
-    // Set up environment variables for testing
-    process.env.SUPABASE_URL = 'https://itbmerllqlwoinsletkz.supabase.co';
-    process.env.SUPABASE_PUBLISHABLE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml0Ym1lcmxscWx3b2luc2xldGt6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzcwNTI4MDAsImV4cCI6MjA1MjYyODgwMH0.SmpJqZVhHCpeMN-GUZgvzw_NKG1Rcgn';
+    // Check environment variables
+    if (!process.env.SUPABASE_URL || !process.env.SUPABASE_PUBLISHABLE_KEY) {
+      console.log('Environment variables not set, using default values for testing...');
+      console.log('To use custom values, set SUPABASE_URL and SUPABASE_PUBLISHABLE_KEY');
+      
+      // Set up environment variables for testing with defaults
+      process.env.SUPABASE_URL = process.env.SUPABASE_URL || 'https://itbmerllqlwoinsletkz.supabase.co';
+      process.env.SUPABASE_PUBLISHABLE_KEY = process.env.SUPABASE_PUBLISHABLE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml0Ym1lcmxscWx3b2luc2xldGt6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzcwNTI4MDAsImV4cCI6MjA1MjYyODgwMH0.SmpJqZVhHCpeMN-GUZgvzw_NKG1Rcgn';
+    }
     
     const supabase = getSupabaseClient();
     

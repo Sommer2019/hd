@@ -356,24 +356,28 @@
             try {
                 await submitVoteToDB(clipId, ipHash);
                 
-                // Store vote in localStorage
+                // Store vote in localStorage after successful DB submission
                 localStorage.setItem(VOTE_STORAGE_KEY, clipId);
                 
                 showVotedMessage(clipId);
             } catch (error) {
                 console.error('Error submitting vote to Supabase:', error);
                 
-                // If Supabase fails, still store locally and show message
+                // If Supabase fails, handle appropriately
                 if (error.message === 'Already voted') {
+                    // User already voted, update localStorage to prevent UI confusion
+                    localStorage.setItem(VOTE_STORAGE_KEY, clipId);
                     showError('Du hast bereits abgestimmt!');
                 } else {
-                    localStorage.setItem(VOTE_STORAGE_KEY, clipId);
-                    showVotedMessage(clipId);
+                    // Other errors - clean up localStorage and show error
+                    localStorage.removeItem(VOTE_STORAGE_KEY);
+                    showError('Fehler beim Abstimmen. Bitte versuche es erneut.');
                 }
             }
 
         } catch (error) {
             console.error('Error submitting vote:', error);
+            localStorage.removeItem(VOTE_STORAGE_KEY);
             showError('Fehler beim Abstimmen. Bitte versuche es erneut.');
         }
     }
