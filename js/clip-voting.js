@@ -349,7 +349,7 @@
 
     // Prüft, ob ein Clip eingebettet werden kann (Twitch benötigt eine nicht-lokale Domain)
     function canEmbedClip() {
-        const hostname = window.location.hostname;
+        const hostname = window.location.host;
         return hostname &&
             hostname !== 'localhost' &&
             !hostname.startsWith('127.') &&
@@ -362,7 +362,7 @@
         try {
             if (!canEmbedClip()) return null;
 
-            const parent = window.location.hostname;
+            const parent = window.location.host;
             if (!parent) return null;
 
             const iframe = document.createElement('iframe');
