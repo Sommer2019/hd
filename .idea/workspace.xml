@@ -5,9 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="00c35883-868f-4c61-99bc-64796ad3d22a" name="Changes" comment="Enhance voting system: add no results message, embed button, and improve error handling">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/js/clip-voting.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/clip-voting.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/votingData/results.json" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -292,7 +290,55 @@
       <option name="project" value="LOCAL" />
       <updated>1768575688582</updated>
     </task>
-    <option name="localTasksCounter" value="22" />
+    <task id="LOCAL-00022" summary="Enhance voting system: add no results message, embed button, and improve error handling">
+      <option name="closed" value="true" />
+      <created>1768575969855</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1768575969855</updated>
+    </task>
+    <task id="LOCAL-00023" summary="Enhance voting system: add no results message, embed button, and improve error handling">
+      <option name="closed" value="true" />
+      <created>1768576185204</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1768576185204</updated>
+    </task>
+    <task id="LOCAL-00024" summary="Enhance voting system: add no results message, embed button, and improve error handling">
+      <option name="closed" value="true" />
+      <created>1768576320405</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1768576320405</updated>
+    </task>
+    <task id="LOCAL-00025" summary="Enhance voting system: add no results message, embed button, and improve error handling">
+      <option name="closed" value="true" />
+      <created>1768576369592</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1768576369592</updated>
+    </task>
+    <task id="LOCAL-00026" summary="Enhance voting system: add no results message, embed button, and improve error handling">
+      <option name="closed" value="true" />
+      <created>1768576746909</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1768576746909</updated>
+    </task>
+    <task id="LOCAL-00027" summary="Enhance voting system: add no results message, embed button, and improve error handling">
+      <option name="closed" value="true" />
+      <created>1768576979907</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1768576979907</updated>
+    </task>
+    <option name="localTasksCounter" value="28" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
