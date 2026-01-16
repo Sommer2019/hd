@@ -94,7 +94,7 @@
     }
 
     // Constants for voting period calculation
-    const VOTING_PERIOD_DAYS = 17; // Last 7 days of the month
+    const VOTING_PERIOD_DAYS = 7; // Last 7 days of the month
 
     // Calculate the last week of the current month
     function getLastWeekOfMonth(referenceDate = new Date()) {

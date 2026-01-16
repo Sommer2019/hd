@@ -9,7 +9,7 @@ function main() {
   
   if (tomorrow.getDate() !== 1) {
     console.log('Not the last day of the month yet, skipping calculation');
-    //return;
+    return;
   }
   
   // Read clips
