@@ -146,15 +146,33 @@ async function fetchResultsFromDB() {
   };
 }
 
-// Submit vote (this will need a backend endpoint)
-async function submitVoteToDB(clipId, ipHash) {
+// Get second voting round configuration
+async function getSecondVotingConfig() {
+  const supabase = await getSupabaseClient();
+  const { data, error } = await supabase
+    .from('second_voting_config')
+    .select('*')
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .single();
+  
+  if (error && error.code !== 'PGRST116') {
+    throw error;
+  }
+  
+  return data;
+}
+
+// Submit vote (supports both regular and second voting rounds)
+async function submitVoteToDB(clipId, ipHash, votingRound = 'monthly') {
   const supabase = await getSupabaseClient();
   
-  // Check if already voted
+  // Check if already voted in this voting round
   const { data: existingVote, error: checkError } = await supabase
     .from('votes')
     .select('id')
     .eq('ip_hash', ipHash)
+    .eq('voting_round', votingRound)
     .single();
   
   if (existingVote) {
@@ -171,8 +189,24 @@ async function submitVoteToDB(clipId, ipHash) {
     .insert({
       ip_hash: ipHash,
       clip_id: clipId,
+      voting_round: votingRound,
       voted_at: new Date().toISOString()
     });
   
   if (insertError) throw insertError;
+}
+
+// Get Clip des Jahres for a specific year
+async function fetchClipDesJahres(year) {
+  const supabase = await getSupabaseClient();
+  const { data, error } = await supabase
+    .from('clip_des_jahres')
+    .select('*')
+    .eq('year', year)
+    .order('month', { ascending: true })
+    .order('votes', { ascending: false });
+  
+  if (error) throw error;
+  
+  return data || [];
 }

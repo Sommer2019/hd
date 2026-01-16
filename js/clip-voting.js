@@ -6,6 +6,7 @@
     const CLIPS_URL = './votingData/clips.json';
     const RESULTS_URL = './votingData/results.json';
     const VOTE_STORAGE_KEY = 'cdm_voted_clip';
+    const VOTE_STORAGE_KEY_SECOND = 'cdm_voted_clip_second';
     const GITHUB_REPO_OWNER = 'HD1920x1080Media';
     const GITHUB_REPO_NAME = 'Landing-Page';
 
@@ -13,6 +14,8 @@
     let currentClips = null;
     let currentResults = null;
     let userIpHash = null;
+    let secondVotingConfig = null;
+    let isSecondVoting = false;
 
     // Get user's IP address and hash it
     async function getUserIpHash() {
@@ -156,10 +159,34 @@
             // Load configuration
             currentConfig = await fetchJSON(CONFIG_URL);
 
-            // Check if voting is currently active
-            // Voting is automatically active during the last week of each month
-            const now = new Date();
-            const isVotingActive = isInLastWeekOfMonth(now);
+            // Check for second voting round first
+            try {
+                secondVotingConfig = await getSecondVotingConfig();
+                if (secondVotingConfig && secondVotingConfig.is_active) {
+                    const now = new Date();
+                    const endsAt = new Date(secondVotingConfig.ends_at);
+                    
+                    // Check if second voting is still valid (not past end date)
+                    if (now <= endsAt) {
+                        isSecondVoting = true;
+                        console.log('Second voting round is active');
+                    }
+                }
+            } catch (error) {
+                console.error('Error checking second voting config:', error);
+            }
+
+            // Determine if voting is active
+            let isVotingActive = false;
+            
+            if (isSecondVoting) {
+                // Second voting is active
+                isVotingActive = true;
+            } else {
+                // Check if regular voting is active (last week of month)
+                const now = new Date();
+                isVotingActive = isInLastWeekOfMonth(now);
+            }
 
             // Check voting status
             if (isVotingActive) {
@@ -210,8 +237,12 @@
         const container = document.getElementById('voting-container');
         if (!container) return;
 
+        // Determine which storage key and voting round to use
+        const storageKey = isSecondVoting ? VOTE_STORAGE_KEY_SECOND : VOTE_STORAGE_KEY;
+        const votingRound = isSecondVoting ? 'second' : 'monthly';
+
         // Check if user has already voted (check both localStorage and database)
-        const votedClipId = localStorage.getItem(VOTE_STORAGE_KEY);
+        const votedClipId = localStorage.getItem(storageKey);
         
         // Also check database
         try {
@@ -221,6 +252,7 @@
                 .from('votes')
                 .select('clip_id')
                 .eq('ip_hash', ipHash)
+                .eq('voting_round', votingRound)
                 .single();
             
             if (existingVote) {
@@ -237,19 +269,36 @@
             return;
         }
 
-        // Calculate and show voting period info (automatically last week of current month)
-        const votingPeriod = getLastWeekOfMonth();
-        const startDate = votingPeriod.start;
-        const endDate = votingPeriod.end;
+        // Calculate and show voting period info
+        let startDate, endDate, votingTitle;
+        
+        if (isSecondVoting) {
+            // Second voting round
+            startDate = new Date(secondVotingConfig.started_at);
+            endDate = new Date(secondVotingConfig.ends_at);
+            votingTitle = '🏆 Zweite Voting-Runde: Clip des Jahres';
+        } else {
+            // Regular monthly voting (automatically last week of current month)
+            const votingPeriod = getLastWeekOfMonth();
+            startDate = votingPeriod.start;
+            endDate = votingPeriod.end;
+            votingTitle = 'Voting ist aktiv!';
+        }
 
         const header = document.createElement('div');
         header.className = 'voting-header';
-        header.innerHTML = `
-      <h2>Voting ist aktiv!</h2>
-      <p>Voting-Zeitraum: ${formatDate(startDate)} - ${formatDate(endDate)}</p>
-      <p>Du kannst für genau einen Clip abstimmen. Wähle deinen Favoriten aus!</p>
-      <p><strong>${currentClips.clips.length} Clips</strong> stehen zur Auswahl.</p>
-    `;
+        
+        let headerHTML = `<h2>${votingTitle}</h2>`;
+        headerHTML += `<p>Voting-Zeitraum: ${formatDate(startDate)} - ${formatDate(endDate)}</p>`;
+        
+        if (isSecondVoting) {
+            headerHTML += `<p class="second-voting-notice">Dies ist eine besondere zweite Voting-Runde für die Top ${currentClips.clips.length} Clips aus dem ${secondVotingConfig.source_month}/${secondVotingConfig.source_year}. Die Gewinner werden als "Clip des Jahres" gespeichert!</p>`;
+        }
+        
+        headerHTML += `<p>Du kannst für genau einen Clip abstimmen. Wähle deinen Favoriten aus!</p>`;
+        headerHTML += `<p><strong>${currentClips.clips.length} Clips</strong> stehen zur Auswahl.</p>`;
+        
+        header.innerHTML = headerHTML;
         container.appendChild(header);
 
         // Show clips
@@ -352,12 +401,16 @@
             // Get IP hash
             const ipHash = await getUserIpHash();
             
+            // Determine which storage key and voting round to use
+            const storageKey = isSecondVoting ? VOTE_STORAGE_KEY_SECOND : VOTE_STORAGE_KEY;
+            const votingRound = isSecondVoting ? 'second' : 'monthly';
+            
             // Try to submit vote to Supabase
             try {
-                await submitVoteToDB(clipId, ipHash);
+                await submitVoteToDB(clipId, ipHash, votingRound);
                 
                 // Store vote in localStorage after successful DB submission
-                localStorage.setItem(VOTE_STORAGE_KEY, clipId);
+                localStorage.setItem(storageKey, clipId);
                 
                 showVotedMessage(clipId);
             } catch (error) {
@@ -366,18 +419,19 @@
                 // If Supabase fails, handle appropriately
                 if (error.message === 'Already voted') {
                     // User already voted, update localStorage to prevent UI confusion
-                    localStorage.setItem(VOTE_STORAGE_KEY, clipId);
+                    localStorage.setItem(storageKey, clipId);
                     showError('Du hast bereits abgestimmt!');
                 } else {
                     // Other errors - clean up localStorage and show error
-                    localStorage.removeItem(VOTE_STORAGE_KEY);
+                    localStorage.removeItem(storageKey);
                     showError('Fehler beim Abstimmen. Bitte versuche es erneut.');
                 }
             }
 
         } catch (error) {
             console.error('Error submitting vote:', error);
-            localStorage.removeItem(VOTE_STORAGE_KEY);
+            const storageKey = isSecondVoting ? VOTE_STORAGE_KEY_SECOND : VOTE_STORAGE_KEY;
+            localStorage.removeItem(storageKey);
             showError('Fehler beim Abstimmen. Bitte versuche es erneut.');
         }
     }

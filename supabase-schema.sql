@@ -32,7 +32,8 @@ CREATE TABLE IF NOT EXISTS votes (
     ip_hash TEXT NOT NULL,
     clip_id TEXT NOT NULL,
     voted_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    UNIQUE(ip_hash)
+    voting_round TEXT DEFAULT 'monthly',
+    UNIQUE(ip_hash, voting_round)
 );
 
 -- Table: results
@@ -118,4 +119,71 @@ CREATE POLICY "Allow anon role to insert results"
 
 CREATE POLICY "Allow anon role to delete results"
     ON results FOR DELETE
+    USING (true);
+
+-- Table: second_voting_config
+-- Stores configuration for the manual second voting round
+CREATE TABLE IF NOT EXISTS second_voting_config (
+    id BIGSERIAL PRIMARY KEY,
+    is_active BOOLEAN DEFAULT FALSE,
+    started_at TIMESTAMPTZ,
+    ends_at TIMESTAMPTZ,
+    source_year INTEGER,
+    source_month INTEGER,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- Table: clip_des_jahres
+-- Stores "Clip des Jahres" winners organized by year and month
+CREATE TABLE IF NOT EXISTS clip_des_jahres (
+    id BIGSERIAL PRIMARY KEY,
+    year INTEGER NOT NULL,
+    month INTEGER NOT NULL,
+    clip_id TEXT NOT NULL,
+    url TEXT NOT NULL,
+    embed_url TEXT NOT NULL,
+    broadcaster_id TEXT NOT NULL,
+    broadcaster_name TEXT NOT NULL,
+    creator_id TEXT NOT NULL,
+    creator_name TEXT NOT NULL,
+    video_id TEXT,
+    game_id TEXT,
+    language TEXT,
+    title TEXT NOT NULL,
+    view_count INTEGER DEFAULT 0,
+    created_at TIMESTAMPTZ NOT NULL,
+    thumbnail_url TEXT,
+    duration NUMERIC,
+    vod_offset INTEGER,
+    votes INTEGER DEFAULT 0,
+    calculated_at TIMESTAMPTZ NOT NULL,
+    UNIQUE(year, month, clip_id)
+);
+
+-- Indexes for new tables
+CREATE INDEX IF NOT EXISTS idx_second_voting_config_is_active ON second_voting_config(is_active);
+CREATE INDEX IF NOT EXISTS idx_clip_des_jahres_year_month ON clip_des_jahres(year, month);
+CREATE INDEX IF NOT EXISTS idx_votes_voting_round ON votes(voting_round);
+
+-- Enable RLS for new tables
+ALTER TABLE second_voting_config ENABLE ROW LEVEL SECURITY;
+ALTER TABLE clip_des_jahres ENABLE ROW LEVEL SECURITY;
+
+-- RLS Policies for second_voting_config
+CREATE POLICY "Allow public read access to second_voting_config"
+    ON second_voting_config FOR SELECT
+    USING (true);
+
+CREATE POLICY "Allow anon role to manage second_voting_config"
+    ON second_voting_config FOR ALL
+    USING (true);
+
+-- RLS Policies for clip_des_jahres
+CREATE POLICY "Allow public read access to clip_des_jahres"
+    ON clip_des_jahres FOR SELECT
+    USING (true);
+
+CREATE POLICY "Allow anon role to manage clip_des_jahres"
+    ON clip_des_jahres FOR ALL
     USING (true);

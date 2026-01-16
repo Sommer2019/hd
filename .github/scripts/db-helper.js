@@ -194,6 +194,166 @@ async function getLatestResults(supabase) {
   return data || [];
 }
 
+// Get second voting round configuration
+async function getSecondVotingConfig(supabase) {
+  const { data, error } = await supabase
+    .from('second_voting_config')
+    .select('*')
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .single();
+  
+  if (error && error.code !== 'PGRST116') { // PGRST116 = no rows returned
+    throw error;
+  }
+  
+  return data;
+}
+
+// Create or update second voting config
+async function setSecondVotingConfig(supabase, config) {
+  // Get existing config
+  const existing = await getSecondVotingConfig(supabase);
+  
+  if (existing) {
+    // Update existing config
+    const { error } = await supabase
+      .from('second_voting_config')
+      .update({
+        ...config,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', existing.id);
+    
+    if (error) throw error;
+  } else {
+    // Insert new config
+    const { error } = await supabase
+      .from('second_voting_config')
+      .insert({
+        ...config,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      });
+    
+    if (error) throw error;
+  }
+}
+
+// Save clips to clip_des_jahres table
+async function saveClipDesJahres(supabase, clips, year, month) {
+  // Delete existing entries for this year/month
+  await supabase
+    .from('clip_des_jahres')
+    .delete()
+    .eq('year', year)
+    .eq('month', month);
+  
+  // Insert new clips
+  const clipsToInsert = clips.map(clip => ({
+    year,
+    month,
+    clip_id: clip.id,
+    url: clip.url,
+    embed_url: clip.embed_url,
+    broadcaster_id: clip.broadcaster_id,
+    broadcaster_name: clip.broadcaster_name,
+    creator_id: clip.creator_id,
+    creator_name: clip.creator_name,
+    video_id: clip.video_id,
+    game_id: clip.game_id,
+    language: clip.language,
+    title: clip.title,
+    view_count: clip.view_count,
+    created_at: clip.created_at,
+    thumbnail_url: clip.thumbnail_url,
+    duration: clip.duration,
+    vod_offset: clip.vod_offset,
+    votes: clip.votes,
+    calculated_at: new Date().toISOString()
+  }));
+  
+  const { error } = await supabase
+    .from('clip_des_jahres')
+    .insert(clipsToInsert);
+  
+  if (error) throw error;
+}
+
+// Get clip des jahres entries for a specific year
+async function getClipDesJahres(supabase, year) {
+  const { data, error } = await supabase
+    .from('clip_des_jahres')
+    .select('*')
+    .eq('year', year)
+    .order('month', { ascending: true })
+    .order('votes', { ascending: false });
+  
+  if (error) throw error;
+  return data || [];
+}
+
+// Delete old clip des jahres entries (for previous years)
+async function deleteOldClipDesJahres(supabase, beforeYear) {
+  const { error } = await supabase
+    .from('clip_des_jahres')
+    .delete()
+    .lt('year', beforeYear);
+  
+  if (error) throw error;
+}
+
+// Check if IP has voted in a specific voting round
+async function hasVotedInRound(supabase, ipHash, votingRound = 'monthly') {
+  const { data, error } = await supabase
+    .from('votes')
+    .select('id')
+    .eq('ip_hash', ipHash)
+    .eq('voting_round', votingRound)
+    .single();
+  
+  if (error && error.code !== 'PGRST116') { // PGRST116 = no rows returned
+    throw error;
+  }
+  
+  return data !== null;
+}
+
+// Record a vote for a specific voting round
+async function recordVoteInRound(supabase, ipHash, clipId, votingRound = 'monthly') {
+  const { error } = await supabase
+    .from('votes')
+    .insert({
+      ip_hash: ipHash,
+      clip_id: clipId,
+      voting_round: votingRound,
+      voted_at: new Date().toISOString()
+    });
+  
+  if (error) throw error;
+}
+
+// Get votes for a specific voting round
+async function getVotesForRound(supabase, votingRound = 'monthly') {
+  const { data, error } = await supabase
+    .from('votes')
+    .select('*')
+    .eq('voting_round', votingRound);
+  
+  if (error) throw error;
+  return data || [];
+}
+
+// Clear votes for a specific voting round
+async function clearVotesForRound(supabase, votingRound = 'monthly') {
+  const { error } = await supabase
+    .from('votes')
+    .delete()
+    .eq('voting_round', votingRound);
+  
+  if (error) throw error;
+}
+
 module.exports = {
   getSupabaseClient,
   clearClips,
@@ -204,5 +364,14 @@ module.exports = {
   getVotes,
   clearVotes,
   saveResults,
-  getLatestResults
+  getLatestResults,
+  getSecondVotingConfig,
+  setSecondVotingConfig,
+  saveClipDesJahres,
+  getClipDesJahres,
+  deleteOldClipDesJahres,
+  hasVotedInRound,
+  recordVoteInRound,
+  getVotesForRound,
+  clearVotesForRound
 };
