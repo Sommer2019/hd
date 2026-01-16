@@ -390,13 +390,9 @@
             const url = clip.url || '';
             // Twitch clips: https://clips.twitch.tv/<slug>
             if (url.includes('clips.twitch.tv')) {
-                // 1. Slug extrahieren (alles nach dem letzten Slash vor ? oder #)
-                const slug = (url.split('/').filter(Boolean).pop() || '').split(/[?#]/)[0];
-                // 2. Zuweisung (src-Attribut setzen)
-                iframe.src = `https://clips.twitch.tv/?clip=${encodeURIComponent(slug)}&parent=hd1920x1080.de`;
+                iframe.src = `https://clips.twitch.tv/?clip=${clip.id}&parent=hd1920x1080.de`;
                 return iframe;
             }
-            // Fallback: wir können die URL nicht sicher einbetten
             return null;
         } catch (err) {
             console.error('Embed creation failed', err);
