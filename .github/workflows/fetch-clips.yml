@@ -4,7 +4,7 @@ on:
   schedule:
     # Run on the 22nd day of each month at 00:00 UTC (approximately start of last week)
     # This ensures clips are ready when voting starts in the last week
-    - cron: '50 14 16 * *'
+    - cron: '0 0 22 * *'
   workflow_dispatch:
     inputs:
       start_date:
