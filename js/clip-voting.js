@@ -390,8 +390,8 @@
             const url = clip.url || '';
             // Twitch clips: https://clips.twitch.tv/<slug>
             if (url.includes('clips.twitch.tv')) {
-                iframe.src = `https://clips.twitch.tv/embed?clip=${clip.id}`;
-                iframe.src += `&parent=hd1920x1080.de`;
+                const parent = window.location.host;
+                iframe.src = `https://clips.twitch.tv/embed?clip=${clip.id}&parent=${parent}`;
                 return iframe;
             }
             return null;
