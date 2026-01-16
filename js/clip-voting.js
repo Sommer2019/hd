@@ -409,14 +409,8 @@
         // Lokale Hosts wie 'localhost' oder '127.0.0.1' sind üblicherweise nicht bei Twitch registriert
         // und führen zu "Verbindung abgelehnt" im iframe. In diesen Fällen lieber Fallback (öffnen im neuen Tab).
         const slug = url.split('/').pop();
-        const hostname = window.location.hostname || '';
-        const isLocal = !hostname || hostname === 'localhost' || hostname.startsWith('127.') || hostname === '::1';
-        if (isLocal) {
-          // Signalisiere dem Caller, dass wir das Embed nicht erstellen können (Fallback auf neues Tab)
-          return null;
-        }
-        const parent = hostname;
-        iframe.src = `https://clips.twitch.tv/embed?clip=${encodeURIComponent(slug)}&parent=${encodeURIComponent(parent)}`;
+
+        iframe.src = `https://clips.twitch.tv/embed?clip=${encodeURIComponent(slug)}&parent=hd1920x1080.de`;
         return iframe;
       }
 
