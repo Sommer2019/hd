@@ -150,19 +150,11 @@
     voteBtn.className = 'btn btn-primary vote-btn';
     voteBtn.textContent = 'Für diesen Clip voten';
     voteBtn.onclick = () => voteForClip(clip.id);
-    
-    const watchBtn = document.createElement('a');
-    watchBtn.href = clip.url;
-    watchBtn.target = '_blank';
-    // Verwende secondary, damit der Ansehen-Knopf sich visuell vom Vote-Button abhebt
-    watchBtn.className = 'btn btn-secondary';
-    watchBtn.textContent = 'Clip ansehen';
 
     info.appendChild(title);
     info.appendChild(meta);
     info.appendChild(creator);
     // Zeige "Clip ansehen" vor dem Vote-Button, damit Nutzer die Quelle schnell öffnen können
-    info.appendChild(watchBtn);
     info.appendChild(voteBtn);
     // Embed wird durch Klick auf das Thumbnail gesteuert
 
@@ -310,18 +302,11 @@
     const creator = document.createElement('div');
     creator.className = 'clip-creator';
     creator.textContent = `Erstellt von: ${clip.creator_name}`;
-    
-    const watchBtn = document.createElement('a');
-    watchBtn.href = clip.url;
-    watchBtn.target = '_blank';
-    watchBtn.className = 'btn btn-secondary';
-    watchBtn.textContent = 'Clip ansehen';
 
     info.appendChild(title);
     info.appendChild(votes);
     info.appendChild(meta);
     info.appendChild(creator);
-    info.appendChild(watchBtn);
     // Embed wird durch Klick auf das Thumbnail gesteuert
 
     card.appendChild(rankBadge);
@@ -410,7 +395,8 @@
         // und führen zu "Verbindung abgelehnt" im iframe. In diesen Fällen lieber Fallback (öffnen im neuen Tab).
         const slug = url.split('/').pop();
 
-        iframe.src = `https://clips.twitch.tv/embed?clip=${encodeURIComponent(slug)}&parent=hd1920x1080.de`;
+        const parentHost = (window.location.hostname || 'hd1920x1080.de').replace(/:\d+$/, '');
+        iframe.src = `https://clips.twitch.tv/embed?clip=${encodeURIComponent(slug)}&parent=${encodeURIComponent(parentHost)}`;
         return iframe;
       }
 
