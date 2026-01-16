@@ -1,5 +1,6 @@
 const fs = require('fs');
 const https = require('https');
+const { getSupabaseClient, clearClips, insertClips } = require('./db-helper');
 
 // Helper function to make HTTPS requests
 function httpsRequest(options, postData = null) {
@@ -204,26 +205,34 @@ async function main() {
   const clips = await getClips(broadcasterId, clipsStartDate, clipsEndDate, accessToken, clientId);
   console.log(`Fetched ${clips.length} clips`);
   
-  // Save clips
-  const clipsData = {
-    clips: clips.map(clip => ({
-      id: clip.id,
-      url: clip.url,
-      embed_url: clip.embed_url,
-      broadcaster_id: clip.broadcaster_id,
-      broadcaster_name: clip.broadcaster_name,
-      creator_id: clip.creator_id,
-      creator_name: clip.creator_name,
-      video_id: clip.video_id,
-      game_id: clip.game_id,
-      language: clip.language,
-      title: clip.title,
-      view_count: clip.view_count,
-      created_at: clip.created_at,
-      thumbnail_url: clip.thumbnail_url,
-      duration: clip.duration,
-      vod_offset: clip.vod_offset
-    })),
+  // Save clips to Supabase
+  const supabase = getSupabaseClient();
+  
+  // Clear old clips
+  console.log('Clearing old clips from database...');
+  await clearClips(supabase);
+  
+  // Prepare clips data
+  const clipsData = clips.map(clip => ({
+    id: clip.id,
+    url: clip.url,
+    embed_url: clip.embed_url,
+    broadcaster_id: clip.broadcaster_id,
+    broadcaster_name: clip.broadcaster_name,
+    creator_id: clip.creator_id,
+    creator_name: clip.creator_name,
+    video_id: clip.video_id,
+    game_id: clip.game_id,
+    language: clip.language,
+    title: clip.title,
+    view_count: clip.view_count,
+    created_at: clip.created_at,
+    thumbnail_url: clip.thumbnail_url,
+    duration: clip.duration,
+    vod_offset: clip.vod_offset
+  }));
+  
+  const fetchMetadata = {
     fetchedAt: new Date().toISOString(),
     period: {
       start: clipsStartDate,
@@ -231,7 +240,18 @@ async function main() {
     }
   };
   
-  fs.writeFileSync('./votingData/clips.json', JSON.stringify(clipsData, null, 2));
+  // Insert new clips
+  console.log('Inserting new clips into database...');
+  await insertClips(supabase, clipsData, fetchMetadata);
+  
+  // Also save to JSON file for backward compatibility
+  const clipsJsonData = {
+    clips: clipsData,
+    fetchedAt: fetchMetadata.fetchedAt,
+    period: fetchMetadata.period
+  };
+  
+  fs.writeFileSync('./votingData/clips.json', JSON.stringify(clipsJsonData, null, 2));
   
   // Update config with voting period
   config.votingPeriod = {

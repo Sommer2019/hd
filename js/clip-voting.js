@@ -6,10 +6,42 @@
     const CLIPS_URL = './votingData/clips.json';
     const RESULTS_URL = './votingData/results.json';
     const VOTE_STORAGE_KEY = 'cdm_voted_clip';
+    const GITHUB_REPO_OWNER = 'HD1920x1080Media';
+    const GITHUB_REPO_NAME = 'Landing-Page';
 
     let currentConfig = null;
     let currentClips = null;
     let currentResults = null;
+    let userIpHash = null;
+
+    // Get user's IP address and hash it
+    async function getUserIpHash() {
+        if (userIpHash) return userIpHash;
+        
+        try {
+            // Get IP from ipify service
+            const response = await fetch('https://api.ipify.org?format=json');
+            const data = await response.json();
+            const ip = data.ip;
+            
+            // Hash the IP using SHA-256
+            const msgBuffer = new TextEncoder().encode(ip);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            
+            userIpHash = hashHex;
+            return userIpHash;
+        } catch (error) {
+            console.error('Error getting IP hash:', error);
+            // Fallback to a session-based ID
+            if (!sessionStorage.getItem('session_id')) {
+                sessionStorage.setItem('session_id', Math.random().toString(36).substring(2));
+            }
+            userIpHash = sessionStorage.getItem('session_id');
+            return userIpHash;
+        }
+    }
 
     // Queue für sequentielles Laden von Embeds (damit nicht alle iframes gleichzeitig geladen werden)
     const embedLoadQueue = [];
@@ -147,6 +179,23 @@
 
     // Fetch JSON data
     async function fetchJSON(url) {
+        // Try to fetch from Supabase database first
+        if (url === CLIPS_URL) {
+            try {
+                return await fetchClipsFromDB();
+            } catch (error) {
+                console.error('Error fetching from Supabase, falling back to JSON file:', error);
+            }
+        } else if (url === RESULTS_URL) {
+            try {
+                const results = await fetchResultsFromDB();
+                if (results) return results;
+            } catch (error) {
+                console.error('Error fetching results from Supabase, falling back to JSON file:', error);
+            }
+        }
+        
+        // Fallback to JSON files
         // Add cache busting for development. In production, consider using proper
         // HTTP cache headers (Cache-Control, ETag) for better performance
         const response = await fetch(url + '?t=' + Date.now());
@@ -161,8 +210,27 @@
         const container = document.getElementById('voting-container');
         if (!container) return;
 
-        // Check if user has already voted
+        // Check if user has already voted (check both localStorage and database)
         const votedClipId = localStorage.getItem(VOTE_STORAGE_KEY);
+        
+        // Also check database
+        try {
+            const ipHash = await getUserIpHash();
+            const supabase = await getSupabaseClient();
+            const { data: existingVote } = await supabase
+                .from('votes')
+                .select('clip_id')
+                .eq('ip_hash', ipHash)
+                .single();
+            
+            if (existingVote) {
+                showVotedMessage(existingVote.clip_id);
+                return;
+            }
+        } catch (error) {
+            // If database check fails, continue with localStorage check
+            console.error('Error checking vote in database:', error);
+        }
 
         if (votedClipId) {
             showVotedMessage(votedClipId);
@@ -281,19 +349,31 @@
         }
 
         try {
-            // Store vote in localStorage
-            localStorage.setItem(VOTE_STORAGE_KEY, clipId);
-
-            // In a real implementation, you would send this to a backend
-            // For now, we'll just show a success message
-            showVotedMessage(clipId);
-
-            // Note: In production, you would call a webhook or GitHub API here
-            // Example: await submitVoteToBackend(clipId);
+            // Get IP hash
+            const ipHash = await getUserIpHash();
+            
+            // Try to submit vote to Supabase
+            try {
+                await submitVoteToDB(clipId, ipHash);
+                
+                // Store vote in localStorage
+                localStorage.setItem(VOTE_STORAGE_KEY, clipId);
+                
+                showVotedMessage(clipId);
+            } catch (error) {
+                console.error('Error submitting vote to Supabase:', error);
+                
+                // If Supabase fails, still store locally and show message
+                if (error.message === 'Already voted') {
+                    showError('Du hast bereits abgestimmt!');
+                } else {
+                    localStorage.setItem(VOTE_STORAGE_KEY, clipId);
+                    showVotedMessage(clipId);
+                }
+            }
 
         } catch (error) {
             console.error('Error submitting vote:', error);
-            localStorage.removeItem(VOTE_STORAGE_KEY);
             showError('Fehler beim Abstimmen. Bitte versuche es erneut.');
         }
     }

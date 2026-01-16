@@ -1,6 +1,6 @@
-const fs = require('fs');
+const { getSupabaseClient, getClips, getVotes, saveResults, clearVotes } = require('./db-helper');
 
-function main() {
+async function main() {
   const today = new Date();
   
   // Only calculate results on the last day of the month
@@ -12,25 +12,48 @@ function main() {
     return;
   }
   
-  // Read clips
-  const clipsPath = './votingData/clips.json';
-  const clipsData = JSON.parse(fs.readFileSync(clipsPath, 'utf8'));
+  // Initialize Supabase
+  const supabase = getSupabaseClient();
   
-  // Read votes
-  const votesPath = './votingData/votes.json';
-  const votesData = JSON.parse(fs.readFileSync(votesPath, 'utf8'));
+  // Get clips from database
+  console.log('Fetching clips from database...');
+  const clips = await getClips(supabase);
+  
+  if (clips.length === 0) {
+    console.log('No clips found in database');
+    return;
+  }
+  
+  // Get votes from database
+  console.log('Fetching votes from database...');
+  const votes = await getVotes(supabase);
   
   // Count votes per clip
   const voteCount = {};
-  for (const ipHash in votesData.votes) {
-    const clipId = votesData.votes[ipHash].clipId;
+  votes.forEach(vote => {
+    const clipId = vote.clip_id;
     voteCount[clipId] = (voteCount[clipId] || 0) + 1;
-  }
+  });
   
   // Create array of clips with vote counts
-  const clipsWithVotes = clipsData.clips.map(clip => ({
-    ...clip,
-    votes: voteCount[clip.id] || 0
+  const clipsWithVotes = clips.map(clip => ({
+    id: clip.clip_id,
+    url: clip.url,
+    embed_url: clip.embed_url,
+    broadcaster_id: clip.broadcaster_id,
+    broadcaster_name: clip.broadcaster_name,
+    creator_id: clip.creator_id,
+    creator_name: clip.creator_name,
+    video_id: clip.video_id,
+    game_id: clip.game_id,
+    language: clip.language,
+    title: clip.title,
+    view_count: clip.view_count,
+    created_at: clip.created_at,
+    thumbnail_url: clip.thumbnail_url,
+    duration: clip.duration,
+    vod_offset: clip.vod_offset,
+    votes: voteCount[clip.clip_id] || 0
   }));
   
   // Sort by votes (descending) and view_count as tiebreaker
@@ -60,24 +83,31 @@ function main() {
     }
   }
   
-  // Save results
-  const resultsData = {
-    results: results,
-    calculatedAt: new Date().toISOString(),
-    period: clipsData.period,
-    totalVotes: Object.keys(votesData.votes).length
+  // Get period info from first clip
+  const periodInfo = clips.length > 0 ? {
+    start: clips[0].period_start,
+    end: clips[0].period_end
+  } : {
+    start: new Date().toISOString(),
+    end: new Date().toISOString()
   };
   
-  fs.writeFileSync('./votingData/results.json', JSON.stringify(resultsData, null, 2));
+  // Save results to database (monthly)
+  const resultsMetadata = {
+    calculatedAt: new Date().toISOString(),
+    period: periodInfo,
+    totalVotes: votes.length
+  };
   
-  // Update config status
-  const configPath = './votingData/config.json';
-  const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
-  config.status = 'closed';
-  fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
+  console.log('Saving results to database...');
+  await saveResults(supabase, results, resultsMetadata);
   
-  console.log(`Results calculated: ${results.length} clips in top 10`);
-  console.log(`Total votes: ${resultsData.totalVotes}`);
+  // Clear votes after calculating results
+  console.log('Clearing votes from database...');
+  await clearVotes(supabase);
+  
+  console.log(`Results calculated and saved: ${results.length} clips in top 10`);
+  console.log(`Total votes: ${resultsMetadata.totalVotes}`);
 }
 
 main().catch(err => {

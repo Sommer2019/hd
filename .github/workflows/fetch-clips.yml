@@ -29,10 +29,15 @@ jobs:
         with:
           node-version: '20'
 
+      - name: Install dependencies
+        run: npm install
+
       - name: Fetch Twitch Clips
         env:
           TWITCH_CLIENT_ID: ${{ secrets.TWITCH_CLIENT_ID }}
           TWITCH_CLIENT_SECRET: ${{ secrets.TWITCH_CLIENT_SECRET }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_PUBLISHABLE_KEY: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
           VOTING_START_DATE: ${{ secrets.VOTING_START_DATE }}
           VOTING_END_DATE: ${{ secrets.VOTING_END_DATE }}
           MANUAL_START_DATE: ${{ github.event.inputs.start_date }}
