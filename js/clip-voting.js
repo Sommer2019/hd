@@ -12,7 +12,7 @@
   let currentResults = null;
 
   // Constants for voting period calculation
-  const VOTING_PERIOD_DAYS = 7; // Last 7 days of the month
+  const VOTING_PERIOD_DAYS = 17; // Last 7 days of the month
 
   // Calculate the last week of the current month
   function getLastWeekOfMonth(referenceDate = new Date()) {
@@ -123,7 +123,10 @@
     thumbnail.src = clip.thumbnail_url;
     thumbnail.alt = clip.title;
     thumbnail.className = 'clip-thumbnail';
-    
+    // Thumbnail klickbar machen: ersetzt das Bild durch das Embed (und zurück)
+    thumbnail.style.cursor = 'pointer';
+    thumbnail.addEventListener('click', () => toggleEmbedReplace(thumbnail, clip, card));
+
     const info = document.createElement('div');
     info.className = 'clip-info';
     
@@ -151,24 +154,17 @@
     const watchBtn = document.createElement('a');
     watchBtn.href = clip.url;
     watchBtn.target = '_blank';
-    watchBtn.className = 'btn btn-primary';
+    // Verwende secondary, damit der Ansehen-Knopf sich visuell vom Vote-Button abhebt
+    watchBtn.className = 'btn btn-secondary';
     watchBtn.textContent = 'Clip ansehen';
-
-    // Einbettungs-Button: erzeugt ein iframe, wenn möglich
-    const embedBtn = document.createElement('button');
-    embedBtn.className = 'btn btn-secondary embed-btn';
-    embedBtn.textContent = 'Einbetten/Abspielen';
-    embedBtn.onclick = (e) => {
-      e.preventDefault();
-      toggleEmbed(card, clip);
-    };
 
     info.appendChild(title);
     info.appendChild(meta);
     info.appendChild(creator);
-    info.appendChild(voteBtn);
+    // Zeige "Clip ansehen" vor dem Vote-Button, damit Nutzer die Quelle schnell öffnen können
     info.appendChild(watchBtn);
-    info.appendChild(embedBtn);
+    info.appendChild(voteBtn);
+    // Embed wird durch Klick auf das Thumbnail gesteuert
 
     card.appendChild(thumbnail);
     card.appendChild(info);
@@ -288,7 +284,10 @@
     thumbnail.src = clip.thumbnail_url;
     thumbnail.alt = clip.title;
     thumbnail.className = 'clip-thumbnail';
-    
+    // Klick auf Thumbnail ersetzt Bild durch Embed
+    thumbnail.style.cursor = 'pointer';
+    thumbnail.addEventListener('click', () => toggleEmbedReplace(thumbnail, clip, card));
+
     const info = document.createElement('div');
     info.className = 'clip-info';
     
@@ -315,24 +314,15 @@
     const watchBtn = document.createElement('a');
     watchBtn.href = clip.url;
     watchBtn.target = '_blank';
-    watchBtn.className = 'btn btn-primary';
+    watchBtn.className = 'btn btn-secondary';
     watchBtn.textContent = 'Clip ansehen';
-
-    // Einbettungs-Button: erzeugt ein iframe, wenn möglich
-    const embedBtn = document.createElement('button');
-    embedBtn.className = 'btn btn-secondary embed-btn';
-    embedBtn.textContent = 'Einbetten/Abspielen';
-    embedBtn.onclick = (e) => {
-      e.preventDefault();
-      toggleEmbed(card, clip);
-    };
 
     info.appendChild(title);
     info.appendChild(votes);
     info.appendChild(meta);
     info.appendChild(creator);
     info.appendChild(watchBtn);
-    info.appendChild(embedBtn);
+    // Embed wird durch Klick auf das Thumbnail gesteuert
 
     card.appendChild(rankBadge);
     card.appendChild(thumbnail);
@@ -341,12 +331,18 @@
     return card;
   }
 
-  // Toggle embed iframe inside the card. Wenn bereits ein iframe existiert, entferne es.
-  function toggleEmbed(container, clip) {
-    const existing = container.querySelector('.clip-embed');
+  // Toggle embed by replacing the thumbnail element with an embed container (iframe).
+  function toggleEmbedReplace(thumbnailEl, clip, card) {
+    const existing = card.querySelector('.clip-embed');
+    // If an embed already exists for this clip, remove it and restore thumbnail
+    if (existing && existing.dataset.clipId === String(clip.id)) {
+      existing.parentNode.replaceChild(thumbnailEl, existing);
+      return;
+    }
+
+    // If another embed exists for a different clip, remove it first
     if (existing) {
       existing.remove();
-      return;
     }
 
     const embedContainer = document.createElement('div');
@@ -354,17 +350,41 @@
     embedContainer.style.marginTop = '10px';
     embedContainer.style.width = '100%';
     embedContainer.style.height = '360px';
+    embedContainer.dataset.clipId = String(clip.id);
 
-    // Erzeuge iframe (verwende embed_url wenn vorhanden)
+    // Wenn das Clip-Objekt nicht eingebettet werden kann (z.B. Twitch auf localhost),
+    // öffnen wir den Clip direkt im neuen Tab und lassen das Thumbnail unverändert.
+    if (!canEmbedClip(clip)) {
+      window.open(clip.url, '_blank');
+      return;
+    }
+
     const iframe = createEmbedIframe(clip);
     if (!iframe) {
-      // Fallback: öffne Clip in neuem Tab
+      // Sicherheitshalber: falls createEmbedIframe aus irgendeinem Grund kein iframe erzeugt,
+      // öffnen wir den Clip im neuen Tab.
       window.open(clip.url, '_blank');
       return;
     }
 
     embedContainer.appendChild(iframe);
-    container.appendChild(embedContainer);
+    // Ersetze das Thumbnail im DOM durch das Embed-Container
+    if (thumbnailEl.parentNode) {
+      thumbnailEl.parentNode.replaceChild(embedContainer, thumbnailEl);
+    }
+  }
+
+  // Prüft, ob ein Clip eingebettet werden kann (Twitch benötigt eine nicht-lokale Domain)
+  function canEmbedClip(clip) {
+    if (clip && clip.embed_url) return true;
+    const url = (clip && clip.url) || '';
+    if (url.includes('clips.twitch.tv')) {
+      const hostname = window.location.hostname || '';
+      const isLocal = !hostname || hostname === 'localhost' || hostname.startsWith('127.') || hostname === '::1';
+      return !isLocal;
+    }
+    if (url.includes('youtube.com') || url.includes('youtu.be')) return true;
+    return false;
   }
 
   // Erzeugt ein iframe-Element für den Clip. Wenn nicht möglich, return null.
@@ -386,8 +406,16 @@
       // Twitch clips: https://clips.twitch.tv/<slug>
       if (url.includes('clips.twitch.tv')) {
         // Für Twitch benötigt das Embed den `parent`-Parameter. Wir nutzen hostname.
+        // Lokale Hosts wie 'localhost' oder '127.0.0.1' sind üblicherweise nicht bei Twitch registriert
+        // und führen zu "Verbindung abgelehnt" im iframe. In diesen Fällen lieber Fallback (öffnen im neuen Tab).
         const slug = url.split('/').pop();
-        const parent = window.location.hostname || 'localhost';
+        const hostname = window.location.hostname || '';
+        const isLocal = !hostname || hostname === 'localhost' || hostname.startsWith('127.') || hostname === '::1';
+        if (isLocal) {
+          // Signalisiere dem Caller, dass wir das Embed nicht erstellen können (Fallback auf neues Tab)
+          return null;
+        }
+        const parent = hostname;
         iframe.src = `https://clips.twitch.tv/embed?clip=${encodeURIComponent(slug)}&parent=${encodeURIComponent(parent)}`;
         return iframe;
       }
