@@ -393,8 +393,9 @@
                 // Für Twitch benötigt das Embed den `parent`-Parameter. Wir nutzen hostname.
                 // Lokale Hosts wie 'localhost' oder '127.0.0.1' sind üblicherweise nicht bei Twitch registriert
                 // und führen zu "Verbindung abgelehnt" im iframe. In diesen Fällen lieber Fallback (öffnen im neuen Tab).
-                const slug = url.split('/').pop();
-                const parentHost = (window.location.hostname || 'hd1920x1080.de').replace(/:\d+$/, '');
+// Robustere Slug-Extraktion (ohne Query/Hash) und sicheres Parent-Host-Handling
+                const slug = (url.split('/').filter(Boolean).pop() || '').split(/[?#]/)[0];
+                const parentHost = ((window.location.hostname || window.location.host || 'hd1920x1080.de').replace(/:\d+$/, ''));
                 const src = `https://clips.twitch.tv/embed?clip=${encodeURIComponent(slug)}&parent=${encodeURIComponent(parentHost)}`;
                 iframe.setAttribute('src', src);
                 iframe.src = src;
