@@ -17,6 +17,16 @@
     let secondVotingConfig = null;
     let isSecondVoting = false;
 
+    // Helper function to get the appropriate storage key
+    function getStorageKey() {
+        return isSecondVoting ? VOTE_STORAGE_KEY_SECOND : VOTE_STORAGE_KEY;
+    }
+
+    // Helper function to get the current voting round
+    function getVotingRound() {
+        return isSecondVoting ? 'second' : 'monthly';
+    }
+
     // Get user's IP address and hash it
     async function getUserIpHash() {
         if (userIpHash) return userIpHash;
@@ -237,12 +247,8 @@
         const container = document.getElementById('voting-container');
         if (!container) return;
 
-        // Determine which storage key and voting round to use
-        const storageKey = isSecondVoting ? VOTE_STORAGE_KEY_SECOND : VOTE_STORAGE_KEY;
-        const votingRound = isSecondVoting ? 'second' : 'monthly';
-
         // Check if user has already voted (check both localStorage and database)
-        const votedClipId = localStorage.getItem(storageKey);
+        const votedClipId = localStorage.getItem(getStorageKey());
         
         // Also check database
         try {
@@ -252,7 +258,7 @@
                 .from('votes')
                 .select('clip_id')
                 .eq('ip_hash', ipHash)
-                .eq('voting_round', votingRound)
+                .eq('voting_round', getVotingRound())
                 .single();
             
             if (existingVote) {
@@ -401,16 +407,12 @@
             // Get IP hash
             const ipHash = await getUserIpHash();
             
-            // Determine which storage key and voting round to use
-            const storageKey = isSecondVoting ? VOTE_STORAGE_KEY_SECOND : VOTE_STORAGE_KEY;
-            const votingRound = isSecondVoting ? 'second' : 'monthly';
-            
             // Try to submit vote to Supabase
             try {
-                await submitVoteToDB(clipId, ipHash, votingRound);
+                await submitVoteToDB(clipId, ipHash, getVotingRound());
                 
                 // Store vote in localStorage after successful DB submission
-                localStorage.setItem(storageKey, clipId);
+                localStorage.setItem(getStorageKey(), clipId);
                 
                 showVotedMessage(clipId);
             } catch (error) {
@@ -419,19 +421,18 @@
                 // If Supabase fails, handle appropriately
                 if (error.message === 'Already voted') {
                     // User already voted, update localStorage to prevent UI confusion
-                    localStorage.setItem(storageKey, clipId);
+                    localStorage.setItem(getStorageKey(), clipId);
                     showError('Du hast bereits abgestimmt!');
                 } else {
                     // Other errors - clean up localStorage and show error
-                    localStorage.removeItem(storageKey);
+                    localStorage.removeItem(getStorageKey());
                     showError('Fehler beim Abstimmen. Bitte versuche es erneut.');
                 }
             }
 
         } catch (error) {
             console.error('Error submitting vote:', error);
-            const storageKey = isSecondVoting ? VOTE_STORAGE_KEY_SECOND : VOTE_STORAGE_KEY;
-            localStorage.removeItem(storageKey);
+            localStorage.removeItem(getStorageKey());
             showError('Fehler beim Abstimmen. Bitte versuche es erneut.');
         }
     }

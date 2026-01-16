@@ -63,7 +63,6 @@
 
         const timeoutId = setTimeout(() => {
             settle();
-            clearTimeout(timeoutId);
         }, 2500);
 
         try {

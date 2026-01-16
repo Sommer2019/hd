@@ -103,39 +103,39 @@ async function main() {
     
     // Get the month from the calculated date
     const calculatedDate = new Date(resultsMetadata.calculatedAt);
-    const year = calculatedDate.getFullYear();
-    const month = calculatedDate.getMonth() + 1;
+    const calculatedYear = calculatedDate.getFullYear();
+    const calculatedMonth = calculatedDate.getMonth() + 1;
     
     // Clean up old years' data if we're in a new year
-    const currentYear = new Date().getFullYear();
-    if (currentYear > year) {
-      console.log(`Cleaning up Clip des Jahres data from years before ${currentYear}...`);
-      await deleteOldClipDesJahres(supabase, currentYear);
+    const actualCurrentYear = new Date().getFullYear();
+    if (actualCurrentYear > calculatedYear) {
+      console.log(`Cleaning up Clip des Jahres data from years before ${actualCurrentYear}...`);
+      await deleteOldClipDesJahres(supabase, actualCurrentYear);
     }
     
     // Check if this is the first clip of a new year's month
     const existingClips = await supabase
       .from('clip_des_jahres')
       .select('year, month')
-      .eq('year', year)
-      .eq('month', month);
+      .eq('year', calculatedYear)
+      .eq('month', calculatedMonth);
     
     // If this is a new year and we have clips from the previous year, clean them up
     if (!existingClips.data || existingClips.data.length === 0) {
       const previousYearClips = await supabase
         .from('clip_des_jahres')
         .select('year')
-        .lt('year', year)
+        .lt('year', calculatedYear)
         .limit(1);
       
       if (previousYearClips.data && previousYearClips.data.length > 0) {
         console.log(`First clip of new year detected, removing old year data...`);
-        await deleteOldClipDesJahres(supabase, year);
+        await deleteOldClipDesJahres(supabase, calculatedYear);
       }
     }
     
     // Save winners to clip_des_jahres
-    await saveClipDesJahres(supabase, winners, year, month);
+    await saveClipDesJahres(supabase, winners, calculatedYear, calculatedMonth);
     
     console.log(`Winners saved with ${maxVotes} votes each`);
   } else {

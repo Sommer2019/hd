@@ -48,15 +48,24 @@ async function main() {
   
   // Check if end date would be after next automatic voting period
   // Automatic voting starts on the 22nd of each month
-  const nextMonth = new Date(startDate);
-  nextMonth.setMonth(nextMonth.getMonth() + 1);
-  const nextVotingStart = new Date(nextMonth.getFullYear(), nextMonth.getMonth(), 22, 0, 0, 0);
+  const currentDay = startDate.getDate();
+  const currentMonth = startDate.getMonth();
+  const currentYear = startDate.getFullYear();
   
-  // If current date is after the 22nd, the next voting starts this month
-  if (startDate.getDate() >= 22) {
-    const thisMonthVotingStart = new Date(startDate.getFullYear(), startDate.getMonth(), 22, 0, 0, 0);
+  // Calculate next voting start date
+  let nextVotingStart;
+  if (currentDay >= 22) {
+    // If we're on or after the 22nd, next voting is next month
+    nextVotingStart = new Date(currentYear, currentMonth + 1, 22, 0, 0, 0);
+  } else {
+    // If we're before the 22nd, next voting is this month
+    nextVotingStart = new Date(currentYear, currentMonth, 22, 0, 0, 0);
+  }
+  
+  // If current date is already in automatic voting period, don't allow second voting
+  if (currentDay >= 22) {
+    const thisMonthVotingStart = new Date(currentYear, currentMonth, 22, 0, 0, 0);
     if (startDate >= thisMonthVotingStart) {
-      // Already in voting period, second voting not allowed
       throw new Error('Cannot start second voting during automatic monthly voting period');
     }
   }
