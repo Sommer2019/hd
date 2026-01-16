@@ -173,7 +173,7 @@
             }
         } catch (error) {
             console.error('Error initializing voting system:', error);
-            showError('Es stehen aktuell keine Ergebnisse oder Clips zum Voting zur Verfügung. Bitte versuche es später erneut.');
+            showError('Es stehen aktuell keine Ergebnisse oder Clips zum Voting zur Verfügung. Voting findet immer ab dem 22. eines Monats statt. Bitte versuche es später erneut.');
         }
     }
 
