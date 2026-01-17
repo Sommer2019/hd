@@ -8,7 +8,8 @@
     "calculate-results": "node .github/scripts/calculate-results.js",
     "start-second-voting": "node .github/scripts/start-second-voting.js",
     "end-second-voting": "node .github/scripts/end-second-voting.js",
-    "check-second-voting-expiry": "node .github/scripts/check-second-voting-expiry.js"
+    "check-second-voting-expiry": "node .github/scripts/check-second-voting-expiry.js",
+    "auto-start-second-voting": "node .github/scripts/auto-start-second-voting.js"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.39.3"
