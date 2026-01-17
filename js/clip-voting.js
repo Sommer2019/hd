@@ -324,8 +324,23 @@
 
     // Create clip card
     function createClipCard(clip) {
+        return createClipCardInternal(clip, false, false);
+    }
+
+    // Create clip card without voting button (for showing after user has voted)
+    function createClipCardWithoutVoting(clip, isVoted) {
+        return createClipCardInternal(clip, true, isVoted);
+    }
+
+    // Internal helper to create clip cards with or without voting functionality
+    function createClipCardInternal(clip, hideVoteButton, isVoted) {
         const card = document.createElement('div');
         card.className = 'clip-card';
+        
+        // Highlight the clip that was voted for
+        if (isVoted) {
+            card.classList.add('voted-clip');
+        }
 
         // Direktes Embed: wenn möglich zeigen wir das iframe sofort an.
         const embedWrapper = document.createElement('div');
@@ -376,21 +391,29 @@
         creator.className = 'clip-creator';
         creator.textContent = `Erstellt von: ${clip.creator_name}`;
 
-        const voteBtn = document.createElement('button');
-        voteBtn.className = 'btn btn-primary vote-btn';
-        voteBtn.textContent = 'Für diesen Clip voten';
-        voteBtn.onclick = () => voteForClip(clip.id);
-
         info.appendChild(title);
         info.appendChild(meta);
         info.appendChild(creator);
-        // Zeige "Clip ansehen" vor dem Vote-Button, damit Nutzer die Quelle schnell öffnen können
-        info.appendChild(voteBtn);
-        // Embed wird durch Klick auf das Thumbnail gesteuert
+
+        // Add vote button only if not hidden
+        if (!hideVoteButton) {
+            const voteBtn = document.createElement('button');
+            voteBtn.className = 'btn btn-primary vote-btn';
+            voteBtn.textContent = 'Für diesen Clip voten';
+            voteBtn.onclick = () => voteForClip(clip.id);
+            info.appendChild(voteBtn);
+        }
+
+        // Add "Your Vote" badge if this is the voted clip
+        if (isVoted) {
+            const voteBadge = document.createElement('div');
+            voteBadge.className = 'your-vote-badge';
+            voteBadge.textContent = '✓ Deine Stimme';
+            info.appendChild(voteBadge);
+        }
 
         // Embed/Fallback zuerst, dann Info
         card.appendChild(embedWrapper);
-
         card.appendChild(info);
 
         return card;
@@ -402,8 +425,8 @@
         showVoteConfirm(clipId);
     }
 
-    // Show voted message
-    function showVotedMessage() {
+    // Show voted message with all clips and highlight the voted clip
+    function showVotedMessage(votedClipId) {
         const container = document.getElementById('voting-container');
         if (!container) return;
 
@@ -419,6 +442,32 @@
     `;
 
         container.appendChild(message);
+
+        // Show all clips with the voted clip highlighted
+        if (currentClips && currentClips.clips && currentClips.clips.length > 0) {
+            const clipsSection = document.createElement('div');
+            clipsSection.className = 'voted-clips-section';
+            
+            const clipsHeader = document.createElement('h3');
+            clipsHeader.textContent = 'Alle Clips dieser Voting-Runde:';
+            clipsSection.appendChild(clipsHeader);
+
+            const clipsGrid = document.createElement('div');
+            clipsGrid.className = 'clips-grid';
+
+            currentClips.clips.forEach(clip => {
+                // Convert clip.id to string since votedClipId from localStorage is always a string
+                // (clip.id may be string or number from API, votedClipId is always string from localStorage)
+                const clipCard = createClipCardWithoutVoting(clip, String(clip.id) === votedClipId);
+                clipsGrid.appendChild(clipCard);
+            });
+
+            clipsSection.appendChild(clipsGrid);
+            container.appendChild(clipsSection);
+
+            // Start loading embeds
+            startSequentialEmbedLoading();
+        }
     }
 
     // Show results interface
