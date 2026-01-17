@@ -32,15 +32,11 @@ async function main() {
     console.log('Second voting is already active, skipping auto-start');
     console.log(`Active since: ${config.started_at}`);
     console.log(`Source: ${config.source_year}-${config.source_month}`);
-    return;
-  }
-  
-  // Check if second voting was already done for previous month
-  // by checking if config exists with source_year and source_month matching previous month
-  if (config && 
-      config.source_year === prevYear && 
-      config.source_month === prevMonth) {
-    console.log(`Second voting for ${prevYear}-${prevMonth} was already completed`);
+    
+    // Check if the active voting is for the previous month
+    if (config.source_year === prevYear && config.source_month === prevMonth) {
+      console.log('The active second voting is already for the previous month');
+    }
     return;
   }
   
