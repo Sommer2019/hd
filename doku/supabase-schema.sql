@@ -120,7 +120,6 @@ CREATE POLICY "Allow anon role to insert results"
 CREATE POLICY "Allow anon role to delete results"
     ON results FOR DELETE
     USING (true);
-
 -- Table: second_voting_config
 -- Stores configuration for the manual second voting round
 CREATE TABLE IF NOT EXISTS second_voting_config (
