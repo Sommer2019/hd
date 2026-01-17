@@ -1,0 +1,39 @@
+name: Start Clip des Jahres Voting
+
+on:
+  workflow_dispatch:
+    inputs:
+      target_year:
+        description: 'Year for which to vote for Clip des Jahres (YYYY)'
+        required: true
+      duration_days:
+        description: 'Duration of voting in days'
+        required: true
+        default: '7'
+
+permissions:
+  contents: write
+
+jobs:
+  start-cdj-voting:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Start Clip des Jahres Voting
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_PUBLISHABLE_KEY: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
+          TARGET_YEAR: ${{ github.event.inputs.target_year }}
+          DURATION_DAYS: ${{ github.event.inputs.duration_days }}
+        run: |
+          node .github/scripts/start-cdj-voting.js

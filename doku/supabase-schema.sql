@@ -186,3 +186,68 @@ CREATE POLICY "Allow public read access to clip_des_jahres"
 CREATE POLICY "Allow anon role to manage clip_des_jahres"
     ON clip_des_jahres FOR ALL
     USING (true);
+
+-- Table: cdj_voting_config
+-- Stores configuration for the Clip des Jahres voting round
+CREATE TABLE IF NOT EXISTS cdj_voting_config (
+    id BIGSERIAL PRIMARY KEY,
+    is_active BOOLEAN DEFAULT FALSE,
+    started_at TIMESTAMPTZ,
+    ends_at TIMESTAMPTZ,
+    target_year INTEGER,
+    auto_started BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- Table: cdj_winners
+-- Stores the final "Clip des Jahres" winner for each year
+CREATE TABLE IF NOT EXISTS cdj_winners (
+    id BIGSERIAL PRIMARY KEY,
+    year INTEGER NOT NULL UNIQUE,
+    clip_id TEXT NOT NULL,
+    url TEXT NOT NULL,
+    embed_url TEXT NOT NULL,
+    broadcaster_id TEXT NOT NULL,
+    broadcaster_name TEXT NOT NULL,
+    creator_id TEXT NOT NULL,
+    creator_name TEXT NOT NULL,
+    video_id TEXT,
+    game_id TEXT,
+    language TEXT,
+    title TEXT NOT NULL,
+    view_count INTEGER DEFAULT 0,
+    created_at TIMESTAMPTZ NOT NULL,
+    thumbnail_url TEXT,
+    duration NUMERIC,
+    vod_offset INTEGER,
+    votes INTEGER DEFAULT 0,
+    calculated_at TIMESTAMPTZ NOT NULL
+);
+
+-- Indexes for CDJ tables
+CREATE INDEX IF NOT EXISTS idx_cdj_voting_config_is_active ON cdj_voting_config(is_active);
+CREATE INDEX IF NOT EXISTS idx_cdj_winners_year ON cdj_winners(year);
+
+-- Enable RLS for CDJ tables
+ALTER TABLE cdj_voting_config ENABLE ROW LEVEL SECURITY;
+ALTER TABLE cdj_winners ENABLE ROW LEVEL SECURITY;
+
+-- RLS Policies for cdj_voting_config
+CREATE POLICY "Allow public read access to cdj_voting_config"
+    ON cdj_voting_config FOR SELECT
+    USING (true);
+
+CREATE POLICY "Allow anon role to manage cdj_voting_config"
+    ON cdj_voting_config FOR ALL
+    USING (true);
+
+-- RLS Policies for cdj_winners
+CREATE POLICY "Allow public read access to cdj_winners"
+    ON cdj_winners FOR SELECT
+    USING (true);
+
+CREATE POLICY "Allow anon role to manage cdj_winners"
+    ON cdj_winners FOR ALL
+    USING (true);
+

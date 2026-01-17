@@ -24,7 +24,11 @@ const requiredFunctions = [
   'hasVotedInRound',
   'recordVoteInRound',
   'getVotesForRound',
-  'clearVotesForRound'
+  'clearVotesForRound',
+  'getClipDesJahresVotingConfig',
+  'setClipDesJahresVotingConfig',
+  'saveClipDesJahresWinner',
+  'getClipDesJahresWinner'
 ];
 
 let allPassed = true;

@@ -210,3 +210,36 @@ async function fetchClipDesJahres(year) {
   
   return data || [];
 }
+
+// Get Clip des Jahres voting configuration
+async function getClipDesJahresVotingConfig() {
+  const supabase = await getSupabaseClient();
+  const { data, error } = await supabase
+    .from('cdj_voting_config')
+    .select('*')
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .single();
+  
+  if (error && error.code !== 'PGRST116') {
+    throw error;
+  }
+  
+  return data;
+}
+
+// Get Clip des Jahres winner for a specific year
+async function fetchClipDesJahresWinner(year) {
+  const supabase = await getSupabaseClient();
+  const { data, error } = await supabase
+    .from('cdj_winners')
+    .select('*')
+    .eq('year', year)
+    .single();
+  
+  if (error && error.code !== 'PGRST116') {
+    throw error;
+  }
+  
+  return data;
+}

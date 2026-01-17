@@ -14,7 +14,7 @@
 <main class="container">
     <div>
         <h1 class="page-title">Clip des Jahres</h1>
-        <p>Hier findest du die Top 10 Gewinner der zweiten Voting-Runde von Dezember bis November.</p>
+        <p id="cdj-description">Hier findest du die Top 10 Gewinner der zweiten Voting-Runde von Dezember bis November.</p>
         
         <div id="cdj-container" class="voting-container">
         </div>
@@ -22,6 +22,19 @@
         <p style="margin-top:18px">
             <a href="index.html" class="btn">← Zurück</a>
         </p>
+    </div>
+
+    <!-- Vote Bestätigungsdialog -->
+    <div id="vote-modal" class="download-modal" role="dialog" aria-modal="true" aria-hidden="true">
+        <div class="modal-backdrop" onclick="hideVoteConfirm()" aria-hidden="true"></div>
+        <div class="modal-card" role="document">
+            <h3 class="modal-title">Vote bestätigen</h3>
+            <p class="modal-message">Möchtest du wirklich für diesen Clip abstimmen? <strong>Du kannst nur einmal voten!</strong></p>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-secondary" onclick="hideVoteConfirm()">Abbrechen</button>
+                <button type="button" class="btn btn-primary" onclick="confirmVote()">Abstimmen</button>
+            </div>
+        </div>
     </div>
 
     <footer class="footer">

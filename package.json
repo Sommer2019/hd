@@ -9,6 +9,9 @@
     "start-second-voting": "node .github/scripts/start-second-voting.js",
     "end-second-voting": "node .github/scripts/end-second-voting.js",
     "check-second-voting-expiry": "node .github/scripts/check-second-voting-expiry.js",
+    "start-cdj-voting": "node .github/scripts/start-cdj-voting.js",
+    "end-cdj-voting": "node .github/scripts/end-cdj-voting.js",
+    "check-cdj-voting": "node .github/scripts/check-cdj-voting.js"
     "auto-start-second-voting": "node .github/scripts/auto-start-second-voting.js"
   },
   "dependencies": {

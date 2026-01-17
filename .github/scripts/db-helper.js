@@ -354,6 +354,103 @@ async function clearVotesForRound(supabase, votingRound = 'monthly') {
   if (error) throw error;
 }
 
+// Get Clip des Jahres voting configuration
+async function getClipDesJahresVotingConfig(supabase) {
+  const { data, error } = await supabase
+    .from('cdj_voting_config')
+    .select('*')
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .single();
+  
+  if (error && error.code !== 'PGRST116') { // PGRST116 = no rows returned
+    throw error;
+  }
+  
+  return data;
+}
+
+// Create or update Clip des Jahres voting config
+async function setClipDesJahresVotingConfig(supabase, config) {
+  // Get existing config
+  const existing = await getClipDesJahresVotingConfig(supabase);
+  
+  if (existing) {
+    // Update existing config
+    const { error } = await supabase
+      .from('cdj_voting_config')
+      .update({
+        ...config,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', existing.id);
+    
+    if (error) throw error;
+  } else {
+    // Insert new config
+    const { error } = await supabase
+      .from('cdj_voting_config')
+      .insert({
+        ...config,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      });
+    
+    if (error) throw error;
+  }
+}
+
+// Save Clip des Jahres winner
+async function saveClipDesJahresWinner(supabase, clip, year) {
+  // Delete existing winner for this year
+  await supabase
+    .from('cdj_winners')
+    .delete()
+    .eq('year', year);
+  
+  // Insert new winner
+  const { error } = await supabase
+    .from('cdj_winners')
+    .insert({
+      year,
+      clip_id: clip.id,
+      url: clip.url,
+      embed_url: clip.embed_url,
+      broadcaster_id: clip.broadcaster_id,
+      broadcaster_name: clip.broadcaster_name,
+      creator_id: clip.creator_id,
+      creator_name: clip.creator_name,
+      video_id: clip.video_id,
+      game_id: clip.game_id,
+      language: clip.language,
+      title: clip.title,
+      view_count: clip.view_count,
+      created_at: clip.created_at,
+      thumbnail_url: clip.thumbnail_url,
+      duration: clip.duration,
+      vod_offset: clip.vod_offset,
+      votes: clip.votes,
+      calculated_at: new Date().toISOString()
+    });
+  
+  if (error) throw error;
+}
+
+// Get Clip des Jahres winner for a specific year
+async function getClipDesJahresWinner(supabase, year) {
+  const { data, error } = await supabase
+    .from('cdj_winners')
+    .select('*')
+    .eq('year', year)
+    .single();
+  
+  if (error && error.code !== 'PGRST116') {
+    throw error;
+  }
+  
+  return data;
+}
+
 module.exports = {
   getSupabaseClient,
   clearClips,
@@ -373,5 +470,9 @@ module.exports = {
   hasVotedInRound,
   recordVoteInRound,
   getVotesForRound,
-  clearVotesForRound
+  clearVotesForRound,
+  getClipDesJahresVotingConfig,
+  setClipDesJahresVotingConfig,
+  saveClipDesJahresWinner,
+  getClipDesJahresWinner
 };
