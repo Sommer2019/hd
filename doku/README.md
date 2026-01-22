@@ -25,10 +25,10 @@ Add the following secrets to your GitHub repository:
 The system includes three GitHub Actions workflows:
 
 #### Fetch Clips (`fetch-clips.yml`)
-- **Schedule**: Runs on the 22nd of each month at 00:00 UTC (approximately start of last week)
+- **Schedule**: Runs on the 22nd of each month at 00:00 UTC
 - **Manual trigger**: Can be triggered manually with custom date range
 - **Function**: Fetches clips from the last week of the previous month through the second-to-last week of the current month
-- **Output**: Updates `votingData/clips.json` and `votingData/config.json` with voting period set to the last week of current month
+- **Output**: Updates `votingData/clips.json` and `votingData/config.json` with voting period set from 22nd to the end of current month
 
 #### Submit Vote (`submit-vote.yml`)
 - **Trigger**: Via repository_dispatch event (for future integration)
@@ -53,9 +53,9 @@ By default, the system automatically calculates:
   - Example for January: December 25 - January 24
   - This provides approximately 4 weeks of clips for voting
   
-- **Voting Period**: The last week (7 days) of the current month
-  - Example for January: January 25 - January 31
-  - Voting is only active during this final week
+- **Voting Period**: From the 22nd to the last day of the current month
+  - Example for January: January 22 - January 31
+  - Voting is only active during this period
 
 The voting period dates can be overridden in three ways (in order of priority):
 
@@ -107,12 +107,13 @@ Optionally, to manually calculate results:
 
 The system automatically handles monthly cycles with the new weekly periods:
 
-- **Around the 22nd of each month**: 
+- **On the 22nd of each month**: 
   - `fetch-clips.yml` workflow runs automatically
   - Fetches clips from last week of previous month through second-to-last week of current month
-  - Updates voting period dates to the last week of current month in `votingData/config.json`
+  - Updates voting period dates from 22nd to end of current month in `votingData/config.json`
+  - Voting becomes active immediately
   
-- **During the last week of the month (days 25-31)**:
+- **From 22nd to end of month**:
   - Users can vote on clips
   - System automatically shows voting interface during this period
   
@@ -121,9 +122,9 @@ The system automatically handles monthly cycles with the new weekly periods:
   - Calculates top 10 clips by votes
   - Updates `votingData/results.json`
   
-- **After voting period ends (first 3 weeks of next month)**:
+- **From 1st to 21st of next month**:
   - Users automatically see results
-  - System waits for next cycle to begin around the 22nd
+  - System waits for next cycle to begin on the 22nd
 
 ## Technical Details
 

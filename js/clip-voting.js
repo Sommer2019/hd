@@ -139,10 +139,10 @@
     }
 
     // Constants for voting period calculation
-    const VOTING_PERIOD_DAYS = 10; // Last 7 days of the month
+    const VOTING_START_DAY = 22; // Voting starts on the 22nd of each month
 
-    // Calculate the last week of the current month
-    function getLastWeekOfMonth(referenceDate = new Date()) {
+    // Calculate the voting period for the current month (from 22nd to end of month)
+    function getVotingPeriodOfMonth(referenceDate = new Date()) {
         const year = referenceDate.getFullYear();
         const month = referenceDate.getMonth();
 
@@ -150,17 +150,17 @@
         const lastDay = new Date(year, month + 1, 0);
         const lastDayOfMonth = lastDay.getDate();
 
-        // Calculate the start of the last week (VOTING_PERIOD_DAYS before the last day)
-        const startOfLastWeek = new Date(year, month, lastDayOfMonth - (VOTING_PERIOD_DAYS - 1), 0, 0, 0, 0);
-        const endOfLastWeek = new Date(year, month, lastDayOfMonth, 23, 59, 59, 999);
+        // Voting period: 22nd to last day of month
+        const votingStart = new Date(year, month, VOTING_START_DAY, 0, 0, 0, 0);
+        const votingEnd = new Date(year, month, lastDayOfMonth, 23, 59, 59, 999);
 
-        return {start: startOfLastWeek, end: endOfLastWeek};
+        return {start: votingStart, end: votingEnd};
     }
 
-    // Check if current date is in the last week of the month
-    function isInLastWeekOfMonth(now = new Date()) {
-        const lastWeek = getLastWeekOfMonth(now);
-        return now >= lastWeek.start && now <= lastWeek.end;
+    // Check if current date is in the voting period (22nd to end of month)
+    function isInVotingPeriod(now = new Date()) {
+        const votingPeriod = getVotingPeriodOfMonth(now);
+        return now >= votingPeriod.start && now <= votingPeriod.end;
     }
 
     // Initialize the voting system
@@ -193,9 +193,9 @@
                 // Second voting is active
                 isVotingActive = true;
             } else {
-                // Check if regular voting is active (last week of month)
+                // Check if regular voting is active (22nd to end of month)
                 const now = new Date();
-                isVotingActive = isInLastWeekOfMonth(now);
+                isVotingActive = isInVotingPeriod(now);
             }
 
             // Check voting status
@@ -210,7 +210,7 @@
             }
         } catch (error) {
             console.error('Error initializing voting system:', error);
-            showError('Es stehen aktuell keine Ergebnisse oder Clips zum Voting zur Verfügung. Voting findet immer ab dem 22. eines Monats statt. Bitte versuche es später erneut.');
+            showError('Es stehen aktuell keine Ergebnisse oder Clips zum Voting zur Verfügung. Voting findet immer vom 22. bis zum Ende eines Monats statt. Bitte versuche es später erneut.');
         }
     }
 
@@ -284,8 +284,8 @@
             endDate = new Date(secondVotingConfig.ends_at);
             votingTitle = '🏆 Zweite Voting-Runde: Clip des Jahres';
         } else {
-            // Regular monthly voting (automatically last week of current month)
-            const votingPeriod = getLastWeekOfMonth();
+            // Regular monthly voting (automatically 22nd to end of current month)
+            const votingPeriod = getVotingPeriodOfMonth();
             startDate = votingPeriod.start;
             endDate = votingPeriod.end;
             votingTitle = 'Voting ist aktiv!';
@@ -520,8 +520,8 @@
         message.innerHTML = `
       <h2>ℹ️ Noch keine Ergebnisse für den letzten Monat</h2>
       <p>Für den letzten Monat sind derzeit noch keine Ergebnisse verfügbar.</p>
-      <p>Das Voting ist aktuell nicht aktiv. Das Voting findet jeweils in der letzten Woche des Monats statt.</p>
-      <p>Schau bitte kurz vor Monatsende wieder vorbei — dann wird das Voting automatisch aktiviert.</p>
+      <p>Das Voting ist aktuell nicht aktiv. Das Voting findet jeweils vom 22. bis zum Ende des Monats statt.</p>
+      <p>Schau bitte am 22. wieder vorbei — dann wird das Voting automatisch aktiviert.</p>
       <p class="note">Wenn du Clips einsehen möchtest, lade die Seite neu, sobald neue Daten vorhanden sind.</p>
     `;
 

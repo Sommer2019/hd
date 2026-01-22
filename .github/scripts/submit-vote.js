@@ -1,10 +1,10 @@
 const { getSupabaseClient, hasVoted, recordVote } = require('./db-helper');
 
 // Constants for voting period calculation
-const VOTING_PERIOD_DAYS = 7; // Last 7 days of the month
+const VOTING_START_DAY = 22; // Voting starts on the 22nd of each month
 
-// Calculate the last week of the current month
-function getLastWeekOfMonth(referenceDate = new Date()) {
+// Calculate the voting period for the current month (from 22nd to end of month)
+function getVotingPeriodOfMonth(referenceDate = new Date()) {
   const year = referenceDate.getFullYear();
   const month = referenceDate.getMonth();
   
@@ -12,17 +12,17 @@ function getLastWeekOfMonth(referenceDate = new Date()) {
   const lastDay = new Date(year, month + 1, 0);
   const lastDayOfMonth = lastDay.getDate();
   
-  // Calculate the start of the last week (VOTING_PERIOD_DAYS before the last day)
-  const startOfLastWeek = new Date(year, month, lastDayOfMonth - (VOTING_PERIOD_DAYS - 1), 0, 0, 0, 0);
-  const endOfLastWeek = new Date(year, month, lastDayOfMonth, 23, 59, 59, 999);
+  // Voting period: 22nd to last day of month
+  const votingStart = new Date(year, month, VOTING_START_DAY, 0, 0, 0, 0);
+  const votingEnd = new Date(year, month, lastDayOfMonth, 23, 59, 59, 999);
   
-  return { start: startOfLastWeek, end: endOfLastWeek };
+  return { start: votingStart, end: votingEnd };
 }
 
-// Check if current date is in the last week of the month
-function isInLastWeekOfMonth(now = new Date()) {
-  const lastWeek = getLastWeekOfMonth(now);
-  return now >= lastWeek.start && now <= lastWeek.end;
+// Check if current date is in the voting period (22nd to end of month)
+function isInVotingPeriod(now = new Date()) {
+  const votingPeriod = getVotingPeriodOfMonth(now);
+  return now >= votingPeriod.start && now <= votingPeriod.end;
 }
 
 async function main() {
@@ -34,12 +34,12 @@ async function main() {
     process.exit(1);
   }
   
-  // Check if voting is active (automatically active during last week of month)
+  // Check if voting is active (automatically active from 22nd to end of month)
   const now = new Date();
-  const isVotingActive = isInLastWeekOfMonth(now);
+  const isVotingActive = isInVotingPeriod(now);
   
   if (!isVotingActive) {
-    console.log('Voting is not active (not in the last week of the month)');
+    console.log('Voting is not active (not between 22nd and end of month)');
     process.exit(1);
   }
   
