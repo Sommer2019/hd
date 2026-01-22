@@ -91,6 +91,19 @@ async function getClips(broadcasterId, startDate, endDate, accessToken, clientId
   return allClips;
 }
 
+function getVotingPeriodOfMonth(year, month) {
+  // month is 0-indexed (0 = January, 11 = December)
+  // Get the last day of the month
+  const lastDay = new Date(year, month + 1, 0);
+  const lastDayOfMonth = lastDay.getDate();
+  
+  // Voting period: 22nd to last day of month
+  const votingStart = new Date(year, month, 22, 0, 0, 0, 0);
+  const votingEnd = new Date(year, month, lastDayOfMonth, 23, 59, 59, 999);
+  
+  return { start: votingStart, end: votingEnd };
+}
+
 function getLastWeekOfMonth(year, month) {
   // month is 0-indexed (0 = January, 11 = December)
   // Get the last day of the month
@@ -120,8 +133,8 @@ function calculateVotingAndClipsPeriods(referenceDate = new Date()) {
   const year = referenceDate.getFullYear();
   const month = referenceDate.getMonth(); // 0-indexed
   
-  // Voting period: Last week of current month
-  const votingPeriod = getLastWeekOfMonth(year, month);
+  // Voting period: 22nd to end of current month
+  const votingPeriod = getVotingPeriodOfMonth(year, month);
   
   // Clips period: Last week of previous month through second-to-last week of current month
   const prevMonth = month === 0 ? 11 : month - 1;

@@ -2,8 +2,8 @@ name: Fetch Twitch Clips
 
 on:
   schedule:
-    # Run on the 22nd day of each month at 00:00 UTC (approximately start of last week)
-    # This ensures clips are ready when voting starts in the last week
+    # Run on the 22nd day of each month at 00:00 UTC
+    # This ensures clips are ready and voting starts on the 22nd
     - cron: '0 0 22 * *'
   workflow_dispatch:
     inputs:
