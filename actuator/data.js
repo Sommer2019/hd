@@ -16,7 +16,8 @@ async function loadActuatorData() {
             resultsData,
             cdjClipsData,
             secondVotingConfig,
-            cdjVotingConfig
+            cdjVotingConfig,
+            pageViewStats
         ] = await Promise.all([
             fetchVotesStats(supabase),
             fetchClipsStats(supabase),
@@ -29,6 +30,10 @@ async function loadActuatorData() {
             getClipDesJahresVotingConfig().catch(err => {
                 console.warn('Could not load CDJ voting config:', err);
                 return null;
+            }),
+            fetchPageViewStats().catch(err => {
+                console.warn('Could not load page view stats:', err);
+                return null;
             })
         ]);
         
@@ -39,6 +44,7 @@ async function loadActuatorData() {
         updateCDJClipsDisplay(cdjClipsData);
         updateSecondVotingDisplay(secondVotingConfig);
         updateCDJVotingDisplay(cdjVotingConfig);
+        updatePageViewDisplay(pageViewStats);
         updateOtherMetrics();
         
         // Update timestamp
@@ -98,6 +104,24 @@ async function fetchCDJClipsStats(supabase) {
     return count || 0;
 }
 
+async function fetchPageViewStats() {
+    const stats = await Promise.all([
+        getPageViewStats('24h'),
+        getPageViewStats('7d'),
+        getPageViewStats('30d'),
+        getPageViewStats('1y'),
+        getPageViewStats('all')
+    ]);
+    
+    return {
+        views24h: stats[0],
+        views7d: stats[1],
+        views30d: stats[2],
+        views1y: stats[3],
+        viewsAll: stats[4]
+    };
+}
+
 function updateVotesDisplay(votesData) {
     document.getElementById('total-votes').textContent = votesData.total;
     document.getElementById('monthly-votes').textContent = votesData.monthly;
@@ -110,6 +134,27 @@ function updateClipsDisplay(count) {
 
 function updateResultsDisplay(count) {
     document.getElementById('results-count').textContent = count;
+}
+
+function updateCDJClipsDisplay(count) {
+    document.getElementById('cdj-clips-count').textContent = count;
+}
+
+function updatePageViewDisplay(stats) {
+    if (!stats) {
+        document.getElementById('views-24h').textContent = 'N/A';
+        document.getElementById('views-7d').textContent = 'N/A';
+        document.getElementById('views-30d').textContent = 'N/A';
+        document.getElementById('views-1y').textContent = 'N/A';
+        document.getElementById('views-all').textContent = 'N/A';
+        return;
+    }
+    
+    document.getElementById('views-24h').textContent = stats.views24h;
+    document.getElementById('views-7d').textContent = stats.views7d;
+    document.getElementById('views-30d').textContent = stats.views30d;
+    document.getElementById('views-1y').textContent = stats.views1y;
+    document.getElementById('views-all').textContent = stats.viewsAll;
 }
 
 function updateCDJClipsDisplay(count) {

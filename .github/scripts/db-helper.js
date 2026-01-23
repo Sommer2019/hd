@@ -451,6 +451,92 @@ async function getClipDesJahresWinner(supabase, year) {
   return data;
 }
 
+// Get page view statistics
+async function getPageViewStats(supabase, timeRange) {
+  const now = new Date();
+  let startDate;
+  
+  switch (timeRange) {
+    case '24h':
+      startDate = new Date(now - 24 * 60 * 60 * 1000);
+      break;
+    case '7d':
+      startDate = new Date(now - 7 * 24 * 60 * 60 * 1000);
+      break;
+    case '30d':
+      startDate = new Date(now - 30 * 24 * 60 * 60 * 1000);
+      break;
+    case '1y':
+      startDate = new Date(now - 365 * 24 * 60 * 60 * 1000);
+      break;
+    default:
+      startDate = null; // All time
+  }
+  
+  let query = supabase.from('page_views').select('*', { count: 'exact', head: true });
+  
+  if (startDate) {
+    query = query.gte('viewed_at', startDate.toISOString());
+  }
+  
+  const { count, error } = await query;
+  
+  if (error) throw error;
+  return count || 0;
+}
+
+// Get page view statistics by page
+async function getPageViewStatsByPage(supabase, timeRange) {
+  const now = new Date();
+  let startDate;
+  
+  switch (timeRange) {
+    case '24h':
+      startDate = new Date(now - 24 * 60 * 60 * 1000);
+      break;
+    case '7d':
+      startDate = new Date(now - 7 * 24 * 60 * 60 * 1000);
+      break;
+    case '30d':
+      startDate = new Date(now - 30 * 24 * 60 * 60 * 1000);
+      break;
+    case '1y':
+      startDate = new Date(now - 365 * 24 * 60 * 60 * 1000);
+      break;
+    default:
+      startDate = null; // All time
+  }
+  
+  let query = supabase.from('page_views').select('page_path');
+  
+  if (startDate) {
+    query = query.gte('viewed_at', startDate.toISOString());
+  }
+  
+  const { data, error } = await query;
+  
+  if (error) throw error;
+  
+  // Count views by page
+  const pageStats = {};
+  (data || []).forEach(view => {
+    const page = view.page_path;
+    pageStats[page] = (pageStats[page] || 0) + 1;
+  });
+  
+  return pageStats;
+}
+
+// Get total page views
+async function getTotalPageViews(supabase) {
+  const { count, error } = await supabase
+    .from('page_views')
+    .select('*', { count: 'exact', head: true });
+  
+  if (error) throw error;
+  return count || 0;
+}
+
 module.exports = {
   getSupabaseClient,
   clearClips,
@@ -474,5 +560,8 @@ module.exports = {
   getClipDesJahresVotingConfig,
   setClipDesJahresVotingConfig,
   saveClipDesJahresWinner,
-  getClipDesJahresWinner
+  getClipDesJahresWinner,
+  getPageViewStats,
+  getPageViewStatsByPage,
+  getTotalPageViews
 };
