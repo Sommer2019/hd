@@ -456,14 +456,8 @@ async function getOnlyBartPageViewStats(timeRange) {
   
   if (error) throw error;
   
-  // Count views by page
-  const obPages = {
-    '/ob.html': 0,
-    '/ob/posts.html': 0,
-    '/ob/photos.html': 0,
-    '/ob/videos.html': 0,
-    '/ob/media.html': 0
-  };
+  // Count views by page - initialize from knownOBPages to avoid duplication
+  const obPages = Object.fromEntries(knownOBPages.map(page => [page, 0]));
   
   let totalOBViews = 0;
   
