@@ -409,3 +409,72 @@ async function getDetailedPageViewStats(timeRange) {
     pageBreakdown: sortedPages
   };
 }
+
+// Get OnlyBart page view statistics with breakdown by each OnlyBart page
+async function getOnlyBartPageViewStats(timeRange) {
+  const supabase = await getSupabaseClient();
+  const now = new Date();
+  let startDate;
+  
+  switch (timeRange) {
+    case '24h':
+      startDate = new Date(now - 24 * 60 * 60 * 1000);
+      break;
+    case '7d':
+      startDate = new Date(now - 7 * 24 * 60 * 60 * 1000);
+      break;
+    case '30d':
+      startDate = new Date(now - 30 * 24 * 60 * 60 * 1000);
+      break;
+    case '1y':
+      startDate = new Date(now - 365 * 24 * 60 * 60 * 1000);
+      break;
+    default:
+      startDate = null; // All time
+  }
+  
+  // List of known OnlyBart pages
+  // NOTE: Update this list if new OnlyBart pages are added to the /ob/ directory
+  const knownOBPages = [
+    '/ob.html',
+    '/ob/posts.html',
+    '/ob/photos.html',
+    '/ob/videos.html',
+    '/ob/media.html'
+  ];
+  
+  // Use database-level filtering for better performance
+  let query = supabase.from('page_views')
+    .select('page_path')
+    .or(knownOBPages.map(page => `page_path.eq.${page}`).join(','));
+  
+  if (startDate) {
+    query = query.gte('viewed_at', startDate.toISOString());
+  }
+  
+  const { data, error } = await query;
+  
+  if (error) throw error;
+  
+  // Count views by page - initialize from knownOBPages to avoid duplication
+  const obPages = Object.fromEntries(knownOBPages.map(page => [page, 0]));
+  
+  let totalOBViews = 0;
+  
+  (data || []).forEach(view => {
+    const page = view.page_path;
+    if (page in obPages) {
+      obPages[page]++;
+      totalOBViews++;
+    }
+  });
+  
+  return {
+    total: totalOBViews,
+    obMain: obPages['/ob.html'],
+    obPosts: obPages['/ob/posts.html'],
+    obPhotos: obPages['/ob/photos.html'],
+    obVideos: obPages['/ob/videos.html'],
+    obMedia: obPages['/ob/media.html']
+  };
+}

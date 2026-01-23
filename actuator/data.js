@@ -17,7 +17,8 @@ async function loadActuatorData() {
             cdjClipsData,
             secondVotingConfig,
             cdjVotingConfig,
-            pageViewStats
+            pageViewStats,
+            onlyBartStats
         ] = await Promise.all([
             fetchVotesStats(supabase),
             fetchClipsStats(supabase),
@@ -34,6 +35,10 @@ async function loadActuatorData() {
             fetchPageViewStats().catch(err => {
                 console.warn('Could not load page view stats:', err);
                 return null;
+            }),
+            fetchOnlyBartStats().catch(err => {
+                console.warn('Could not load OnlyBart stats:', err);
+                return null;
             })
         ]);
         
@@ -45,6 +50,7 @@ async function loadActuatorData() {
         updateSecondVotingDisplay(secondVotingConfig);
         updateCDJVotingDisplay(cdjVotingConfig);
         updatePageViewDisplay(pageViewStats);
+        updateOnlyBartDisplay(onlyBartStats);
         updateOtherMetrics();
         
         // Update timestamp
@@ -129,6 +135,24 @@ async function fetchPageViewStats() {
         detailed24h: detailed[0],
         detailed7d: detailed[1],
         detailed30d: detailed[2]
+    };
+}
+
+async function fetchOnlyBartStats() {
+    const stats = await Promise.all([
+        getOnlyBartPageViewStats('24h'),
+        getOnlyBartPageViewStats('7d'),
+        getOnlyBartPageViewStats('30d'),
+        getOnlyBartPageViewStats('1y'),
+        getOnlyBartPageViewStats('all')
+    ]);
+    
+    return {
+        stats24h: stats[0],
+        stats7d: stats[1],
+        stats30d: stats[2],
+        stats1y: stats[3],
+        statsAll: stats[4]
     };
 }
 
@@ -285,6 +309,31 @@ function updateCDJVotingDisplay(config) {
     } else {
         detailsEl.textContent = 'Currently inactive';
     }
+}
+
+function updateOnlyBartDisplay(stats) {
+    if (!stats) {
+        document.getElementById('ob-views-24h').textContent = 'N/A';
+        document.getElementById('ob-views-7d').textContent = 'N/A';
+        document.getElementById('ob-views-30d').textContent = 'N/A';
+        document.getElementById('ob-views-1y').textContent = 'N/A';
+        document.getElementById('ob-views-all').textContent = 'N/A';
+        return;
+    }
+    
+    // Update total views
+    document.getElementById('ob-views-24h').textContent = stats.stats24h.total;
+    document.getElementById('ob-views-7d').textContent = stats.stats7d.total;
+    document.getElementById('ob-views-30d').textContent = stats.stats30d.total;
+    document.getElementById('ob-views-1y').textContent = stats.stats1y.total;
+    document.getElementById('ob-views-all').textContent = stats.statsAll.total;
+    
+    // Update breakdown for all-time stats
+    document.getElementById('ob-main-views').textContent = stats.statsAll.obMain;
+    document.getElementById('ob-posts-views').textContent = stats.statsAll.obPosts;
+    document.getElementById('ob-photos-views').textContent = stats.statsAll.obPhotos;
+    document.getElementById('ob-videos-views').textContent = stats.statsAll.obVideos;
+    document.getElementById('ob-media-views').textContent = stats.statsAll.obMedia;
 }
 
 function updateOtherMetrics() {
