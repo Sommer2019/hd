@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="de">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Actuator Data - HD1920x1080</title>
+    <meta name="description" content="System metrics and statistics">
+    <link rel="icon" href="../img/HD.png" type="image/png">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #e0e0e0;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #7C4DFF;
+            border-bottom: 2px solid #7C4DFF;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #9575CD;
+            margin-top: 30px;
+        }
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .metric-card {
+            background: #2a2a2a;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #7C4DFF;
+        }
+        .metric-label {
+            font-size: 14px;
+            color: #9e9e9e;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .metric-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #7C4DFF;
+            margin: 10px 0;
+        }
+        .metric-detail {
+            font-size: 12px;
+            color: #757575;
+        }
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #9e9e9e;
+        }
+        .error {
+            background: #ff5252;
+            color: white;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+        .timestamp {
+            text-align: right;
+            color: #757575;
+            font-size: 12px;
+            margin-top: 40px;
+        }
+        .info-box {
+            background: #2a2a2a;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+            font-size: 14px;
+            color: #9e9e9e;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📊 Actuator Data</h1>
+        
+        <div id="loading" class="loading">
+            Loading data...
+        </div>
+        
+        <div id="error" class="error" style="display: none;"></div>
+        
+        <div id="content" style="display: none;">
+            <h2>Database Statistics</h2>
+            <div class="metric-grid">
+                <div class="metric-card">
+                    <div class="metric-label">Votes (Total)</div>
+                    <div class="metric-value" id="total-votes">-</div>
+                    <div class="metric-detail">All votes in database</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Monthly Votes</div>
+                    <div class="metric-value" id="monthly-votes">-</div>
+                    <div class="metric-detail">Monthly voting round</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">CDJ Votes</div>
+                    <div class="metric-value" id="cdj-votes">-</div>
+                    <div class="metric-detail">Clip des Jahres voting</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Clips</div>
+                    <div class="metric-value" id="clips-count">-</div>
+                    <div class="metric-detail">Total clips in database</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Results Saved</div>
+                    <div class="metric-value" id="results-count">-</div>
+                    <div class="metric-detail">Monthly results records</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">CDJ Clips</div>
+                    <div class="metric-value" id="cdj-clips-count">-</div>
+                    <div class="metric-detail">Clip des Jahres entries</div>
+                </div>
+            </div>
+
+            <h2>Voting Configuration</h2>
+            <div class="metric-grid">
+                <div class="metric-card">
+                    <div class="metric-label">Second Voting Active</div>
+                    <div class="metric-value" id="second-voting-active">-</div>
+                    <div class="metric-detail" id="second-voting-details">-</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">CDJ Voting Active</div>
+                    <div class="metric-value" id="cdj-voting-active">-</div>
+                    <div class="metric-detail" id="cdj-voting-details">-</div>
+                </div>
+            </div>
+
+            <h2>Page View Statistics</h2>
+            <div class="info-box">
+                ℹ️ GitHub Pages does not provide public API access to view statistics. Page view counts are only available through the repository insights (Settings → Insights → Traffic) for repository owners.
+            </div>
+            <div class="metric-grid">
+                <div class="metric-card">
+                    <div class="metric-label">Last 24 Hours</div>
+                    <div class="metric-value">N/A</div>
+                    <div class="metric-detail">Not available via API</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Last 7 Days</div>
+                    <div class="metric-value">N/A</div>
+                    <div class="metric-detail">Not available via API</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Last 30 Days</div>
+                    <div class="metric-value">N/A</div>
+                    <div class="metric-detail">Not available via API</div>
+                </div>
+            </div>
+
+            <h2>Other Interesting Metrics</h2>
+            <div class="metric-grid">
+                <div class="metric-card">
+                    <div class="metric-label">Current Year</div>
+                    <div class="metric-value" id="current-year">-</div>
+                    <div class="metric-detail">Active year</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Current Month</div>
+                    <div class="metric-value" id="current-month">-</div>
+                    <div class="metric-detail">Active month</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Page Load Time</div>
+                    <div class="metric-value" id="page-load-time">-</div>
+                    <div class="metric-detail">Milliseconds</div>
+                </div>
+            </div>
+
+            <div class="timestamp">
+                Last updated: <span id="timestamp">-</span>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/supabase-client.js"></script>
+    <script src="data.js"></script>
+</body>
+</html>
