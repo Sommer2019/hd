@@ -17,17 +17,18 @@ Diese Anleitung erklärt, wie Sie die `page_views` Tabelle in Supabase einrichte
 -- Erstelle die page_views Tabelle
 CREATE TABLE IF NOT EXISTS page_views (
   id BIGSERIAL PRIMARY KEY,
-  ip_hash TEXT NOT NULL,
+  session_id TEXT NOT NULL,
   page_path TEXT NOT NULL,
   viewed_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  redirect_info JSONB,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 -- Erstelle Index für schnellere Abfragen
-CREATE INDEX IF NOT EXISTS idx_page_views_ip_hash ON page_views(ip_hash);
+CREATE INDEX IF NOT EXISTS idx_page_views_session_id ON page_views(session_id);
 CREATE INDEX IF NOT EXISTS idx_page_views_page_path ON page_views(page_path);
 CREATE INDEX IF NOT EXISTS idx_page_views_viewed_at ON page_views(viewed_at);
-CREATE INDEX IF NOT EXISTS idx_page_views_ip_page_time ON page_views(ip_hash, page_path, viewed_at);
+CREATE INDEX IF NOT EXISTS idx_page_views_session_page_time ON page_views(session_id, page_path, viewed_at);
 
 -- Optional: Erstelle eine Funktion um alte Daten zu löschen (älter als 2 Jahre)
 CREATE OR REPLACE FUNCTION cleanup_old_page_views()
@@ -39,10 +40,11 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- Optional: Kommentar hinzufügen
-COMMENT ON TABLE page_views IS 'Speichert Seitenaufrufe mit 5-Minuten-Cooldown pro IP/Seite';
-COMMENT ON COLUMN page_views.ip_hash IS 'Gehashter Browser-Fingerprint (Pseudo-IP)';
+COMMENT ON TABLE page_views IS 'Speichert Seitenaufrufe mit 2-Minuten-Cooldown pro Session/Seite';
+COMMENT ON COLUMN page_views.session_id IS 'Session ID aus localStorage (persistent über Browser-Tabs)';
 COMMENT ON COLUMN page_views.page_path IS 'Pfad der besuchten Seite (z.B. /index.html)';
 COMMENT ON COLUMN page_views.viewed_at IS 'Zeitstempel des Seitenaufrufs';
+COMMENT ON COLUMN page_views.redirect_info IS 'Optional: Redirect-Informationen für 404-Seite (JSON)';
 ```
 
 ## Schritt 2: Row Level Security (RLS) konfigurieren
@@ -79,8 +81,8 @@ Testen Sie die Tabelle mit folgenden Abfragen:
 
 ```sql
 -- Teste Insert
-INSERT INTO page_views (ip_hash, page_path, viewed_at)
-VALUES ('test_hash', '/test.html', NOW());
+INSERT INTO page_views (session_id, page_path, viewed_at)
+VALUES ('test_session', '/test.html', NOW());
 
 -- Teste Select
 SELECT * FROM page_views ORDER BY viewed_at DESC LIMIT 10;
@@ -95,7 +97,7 @@ GROUP BY page_path
 ORDER BY views DESC;
 
 -- Lösche Testdaten
-DELETE FROM page_views WHERE ip_hash = 'test_hash';
+DELETE FROM page_views WHERE session_id = 'test_session';
 ```
 
 ## Schritt 4: Optional - Automatische Bereinigung einrichten
@@ -116,19 +118,25 @@ SELECT cron.schedule(
 
 ## Hinweise zur Funktionsweise
 
-### IP-Hashing
-- Das System verwendet einen **Browser-Fingerprint** statt der echten IP-Adresse
-- Der Fingerprint basiert auf: User-Agent, Sprache, Bildschirmauflösung, Farbtiefe, Zeitzone, etc.
-- Dies ermöglicht Tracking ohne Speicherung personenbezogener Daten
+### Session-basiertes Tracking
+- Das System verwendet eine **Session ID** aus localStorage
+- Die Session ID wird beim ersten Besuch generiert und bleibt persistent
+- Funktioniert über alle Browser-Tabs hinweg
 
-### 5-Minuten-Cooldown
-- Besuche derselben Seite werden nur gezählt, wenn seit dem letzten Besuch 5 Minuten vergangen sind
+### 2-Minuten-Cooldown (pro Seite)
+- Besuche derselben Seite werden nur gezählt, wenn seit dem letzten Besuch 2 Minuten vergangen sind
+- Der Cooldown gilt nur für die GLEICHE Seite, nicht global
+- **Ausnahme**: Die 404-Seite hat KEINEN Cooldown und trackt jeden Besuch
 - Dies verhindert Mehrfachzählungen durch Seiten-Reloads
-- Die Logik wird im JavaScript (`js/page-view-tracker.js`) implementiert
+
+### 404-Seite Redirect-Tracking
+- Die 404-Seite trackt zusätzlich, ob eine Umleitung durchgeführt wurde
+- Redirect-Informationen werden im `redirect_info` Feld (JSON) gespeichert
+- Jeder 404-Besuch wird gezählt, unabhängig vom Cooldown
 
 ### Datenschutz
-- Es werden keine echten IP-Adressen gespeichert
-- Nur Browser-Fingerprints (nicht eindeutig identifizierbar)
+- Es werden keine IP-Adressen gespeichert
+- Nur Session IDs (zufällig generierte Identifier)
 - Daten können nach 2 Jahren automatisch gelöscht werden
 
 ## Statistiken anzeigen
@@ -144,8 +152,8 @@ Die Page View Statistiken sind verfügbar unter:
 - Verifizieren Sie, dass die Supabase URL und API Key korrekt sind
 
 ### Problem: Doppelte Einträge
-- Überprüfen Sie die 5-Minuten-Logik in `page-view-tracker.js`
-- Prüfen Sie, ob der Index `idx_page_views_ip_page_time` existiert
+- Überprüfen Sie die 2-Minuten-Logik in `page-view-tracker.js`
+- Prüfen Sie, ob der Index `idx_page_views_session_page_time` existiert
 
 ### Problem: Langsame Abfragen
 - Stellen Sie sicher, dass alle Indizes erstellt wurden
