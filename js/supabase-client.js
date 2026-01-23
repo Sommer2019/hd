@@ -321,3 +321,91 @@ async function getPageViewStatsByPage(timeRange) {
   
   return pageStats;
 }
+
+// Get detailed page view statistics with breakdown by page including 404s and redirects
+async function getDetailedPageViewStats(timeRange) {
+  const supabase = await getSupabaseClient();
+  const now = new Date();
+  let startDate;
+  
+  switch (timeRange) {
+    case '24h':
+      startDate = new Date(now - 24 * 60 * 60 * 1000);
+      break;
+    case '7d':
+      startDate = new Date(now - 7 * 24 * 60 * 60 * 1000);
+      break;
+    case '30d':
+      startDate = new Date(now - 30 * 24 * 60 * 60 * 1000);
+      break;
+    case '1y':
+      startDate = new Date(now - 365 * 24 * 60 * 60 * 1000);
+      break;
+    default:
+      startDate = null; // All time
+  }
+  
+  let query = supabase.from('page_views').select('page_path, redirect_info');
+  
+  if (startDate) {
+    query = query.gte('viewed_at', startDate.toISOString());
+  }
+  
+  const { data, error } = await query;
+  
+  if (error) throw error;
+  
+  // Count views by page and categorize 404s and redirects
+  const pageStats = {};
+  let total404s = 0;
+  let total404sWithRedirect = 0;
+  
+  (data || []).forEach(view => {
+    const page = view.page_path;
+    
+    // Initialize page stats if not exists
+    if (!pageStats[page]) {
+      pageStats[page] = {
+        count: 0,
+        is404: page === '/404.html' || page === '/404',
+        redirects: 0
+      };
+    }
+    
+    pageStats[page].count++;
+    
+    // Check if this is a 404 page
+    if (pageStats[page].is404) {
+      total404s++;
+      
+      // Check if it has redirect info
+      if (view.redirect_info) {
+        try {
+          const redirectInfo = typeof view.redirect_info === 'string' 
+            ? JSON.parse(view.redirect_info) 
+            : view.redirect_info;
+          
+          if (redirectInfo && redirectInfo.redirected) {
+            pageStats[page].redirects++;
+            total404sWithRedirect++;
+          }
+        } catch (e) {
+          // Invalid JSON, skip
+        }
+      }
+    }
+  });
+  
+  // Sort pages by view count
+  const sortedPages = Object.entries(pageStats)
+    .map(([page, stats]) => ({ page, ...stats }))
+    .sort((a, b) => b.count - a.count);
+  
+  return {
+    totalViews: data ? data.length : 0,
+    total404s,
+    total404sWithRedirect,
+    total404sWithout: total404s - total404sWithRedirect,
+    pageBreakdown: sortedPages
+  };
+}

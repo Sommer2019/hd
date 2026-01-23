@@ -105,12 +105,19 @@ async function fetchCDJClipsStats(supabase) {
 }
 
 async function fetchPageViewStats() {
-    const stats = await Promise.all([
-        getPageViewStats('24h'),
-        getPageViewStats('7d'),
-        getPageViewStats('30d'),
-        getPageViewStats('1y'),
-        getPageViewStats('all')
+    const [stats, detailed] = await Promise.all([
+        Promise.all([
+            getPageViewStats('24h'),
+            getPageViewStats('7d'),
+            getPageViewStats('30d'),
+            getPageViewStats('1y'),
+            getPageViewStats('all')
+        ]),
+        Promise.all([
+            getDetailedPageViewStats('24h'),
+            getDetailedPageViewStats('7d'),
+            getDetailedPageViewStats('30d')
+        ])
     ]);
     
     return {
@@ -118,7 +125,10 @@ async function fetchPageViewStats() {
         views7d: stats[1],
         views30d: stats[2],
         views1y: stats[3],
-        viewsAll: stats[4]
+        viewsAll: stats[4],
+        detailed24h: detailed[0],
+        detailed7d: detailed[1],
+        detailed30d: detailed[2]
     };
 }
 
@@ -155,6 +165,80 @@ function updatePageViewDisplay(stats) {
     document.getElementById('views-30d').textContent = stats.views30d;
     document.getElementById('views-1y').textContent = stats.views1y;
     document.getElementById('views-all').textContent = stats.viewsAll;
+    
+    // Update detailed breakdown
+    if (stats.detailed24h) {
+        updateDetailedPageViewDisplay('24h', stats.detailed24h);
+    }
+    if (stats.detailed7d) {
+        updateDetailedPageViewDisplay('7d', stats.detailed7d);
+    }
+    if (stats.detailed30d) {
+        updateDetailedPageViewDisplay('30d', stats.detailed30d);
+    }
+}
+
+function updateDetailedPageViewDisplay(timeRange, detailedStats) {
+    const containerId = `detailed-views-${timeRange}`;
+    const container = document.getElementById(containerId);
+    
+    if (!container || !detailedStats) return;
+    
+    // Clear existing content
+    container.innerHTML = '';
+    
+    // Create 404 summary
+    const summary404 = document.createElement('div');
+    summary404.className = 'metric-card-small';
+    summary404.innerHTML = `
+        <div class="metric-label-small">404 Errors</div>
+        <div class="metric-value-small">${detailedStats.total404s}</div>
+        <div class="metric-detail">
+            ${detailedStats.total404sWithRedirect} with redirect, 
+            ${detailedStats.total404sWithout} without
+        </div>
+    `;
+    container.appendChild(summary404);
+    
+    // Show top pages (limit to top 5)
+    const topPages = detailedStats.pageBreakdown.slice(0, 5);
+    
+    topPages.forEach(pageData => {
+        const pageCard = document.createElement('div');
+        pageCard.className = 'metric-card-small';
+        
+        const pageName = pageData.page === '/' || pageData.page === '/index.html' 
+            ? 'Home' 
+            : pageData.page;
+        
+        let detailText = `${pageData.count} views`;
+        if (pageData.is404 && pageData.redirects > 0) {
+            detailText += ` (${pageData.redirects} redirected)`;
+        }
+        
+        pageCard.innerHTML = `
+            <div class="metric-label-small">${pageName}</div>
+            <div class="metric-value-small">${pageData.count}</div>
+            <div class="metric-detail">${detailText}</div>
+        `;
+        
+        container.appendChild(pageCard);
+    });
+    
+    // Show "others" if there are more pages
+    if (detailedStats.pageBreakdown.length > 5) {
+        const othersCount = detailedStats.pageBreakdown.slice(5)
+            .reduce((sum, page) => sum + page.count, 0);
+        
+        const othersCard = document.createElement('div');
+        othersCard.className = 'metric-card-small';
+        othersCard.innerHTML = `
+            <div class="metric-label-small">Other pages</div>
+            <div class="metric-value-small">${othersCount}</div>
+            <div class="metric-detail">${detailedStats.pageBreakdown.length - 5} pages</div>
+        `;
+        container.appendChild(othersCard);
+    }
 }
 
 function updateCDJClipsDisplay(count) {
