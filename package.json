@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Landing page with Twitch clip voting system",
   "scripts": {
+    "build-config": "node scripts/build-config.js",
     "fetch-clips": "node .github/scripts/fetch-clips.js",
     "submit-vote": "node .github/scripts/submit-vote.js",
     "calculate-results": "node .github/scripts/calculate-results.js",
@@ -15,7 +16,8 @@
     "auto-start-second-voting": "node .github/scripts/auto-start-second-voting.js"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.39.3"
+    "@supabase/supabase-js": "^2.39.3",
+    "dotenv": "^16.3.1"
   },
   "devDependencies": {},
   "engines": {
