@@ -243,6 +243,74 @@ function copyDiscountCode(event) {
     // update donation visibility whenever view switches
     linksBtn.addEventListener('click', () => updateDonationVisibility());
     liveBtn.addEventListener('click', () => updateDonationVisibility());
+
+    // Fullscreen helpers
+    function requestFullscreenFor(el) {
+        if (!el) return Promise.reject('no element');
+        if (el.requestFullscreen) return el.requestFullscreen();
+        if (el.webkitRequestFullscreen) return el.webkitRequestFullscreen();
+        if (el.msRequestFullscreen) return el.msRequestFullscreen();
+        return Promise.reject('Fullscreen not supported');
+    }
+    function exitFullscreen() {
+        if (document.exitFullscreen) return document.exitFullscreen();
+        if (document.webkitExitFullscreen) return document.webkitExitFullscreen();
+        if (document.msExitFullscreen) return document.msExitFullscreen();
+        return Promise.reject('Exit fullscreen not supported');
+    }
+
+    const fsPlayerBtn = document.getElementById('fs-player-btn');
+    const fsChatBtn = document.getElementById('fs-chat-btn');
+    const fsCombinedBtn = document.getElementById('fs-combined-btn');
+    const playerEmbed = document.querySelector('.responsive-embed.player');
+    const chatEmbed = document.querySelector('.responsive-embed.chat');
+
+    function updateFsButtonState() {
+        const isFs = !!(document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement);
+        // simple aria-pressed state
+        if (fsPlayerBtn) fsPlayerBtn.setAttribute('aria-pressed', String(isFs && (document.fullscreenElement === playerEmbed || document.webkitFullscreenElement === playerEmbed)));
+        if (fsChatBtn) fsChatBtn.setAttribute('aria-pressed', String(isFs && (document.fullscreenElement === chatEmbed || document.webkitFullscreenElement === chatEmbed)));
+        if (fsCombinedBtn) fsCombinedBtn.setAttribute('aria-pressed', String(isFs && (document.fullscreenElement === playerEmbed || document.fullscreenElement === chatEmbed)));
+    }
+
+    if (fsPlayerBtn) fsPlayerBtn.addEventListener('click', () => {
+        if (!playerEmbed) return;
+        if (document.fullscreenElement === playerEmbed) { exitFullscreen().catch(()=>{}); } else { requestFullscreenFor(playerEmbed).catch(()=>{}); }
+    });
+    if (fsChatBtn) fsChatBtn.addEventListener('click', () => {
+        if (!chatEmbed) return;
+        if (document.fullscreenElement === chatEmbed) { exitFullscreen().catch(()=>{}); } else { requestFullscreenFor(chatEmbed).catch(()=>{}); }
+    });
+    if (fsCombinedBtn) fsCombinedBtn.addEventListener('click', () => {
+        // combined: request fullscreen on parent wrapper to show both
+        const wrapper = document.querySelector('.embed-card.fullwidth');
+        if (!wrapper) return;
+        if (document.fullscreenElement === wrapper) { exitFullscreen().catch(()=>{}); } else { requestFullscreenFor(wrapper).catch(()=>{}); }
+    });
+
+    document.addEventListener('fullscreenchange', updateFsButtonState);
+    document.addEventListener('webkitfullscreenchange', updateFsButtonState);
+
+    // On mobile, enter player fullscreen on landscape orientation (optional, only if user allows)
+    function handleOrientation(e) {
+        try {
+            const gamma = (e && e.gamma) || 0; // left/right tilt
+            const beta = (e && e.beta) || 0; // front/back tilt
+            // rough: if rotated to landscape (|gamma| > 45) or beta near +/-90
+            const isLandscape = Math.abs(gamma) > 45 || Math.abs(beta) > 60;
+            if (mq.matches && isLandscape) {
+                // only request fullscreen for player
+                if (playerEmbed && !document.fullscreenElement) {
+                    requestFullscreenFor(playerEmbed).catch(()=>{});
+                }
+            }
+        } catch (e) { /* ignore */ }
+    }
+
+    if (window.DeviceOrientationEvent && typeof window.addEventListener === 'function') {
+        window.addEventListener('deviceorientation', handleOrientation, true);
+    }
+
     mq.addListener(applyInitial);
     applyInitial();
     // Ensure Twitch iframe srcs are set immediately so chat/player load correctly

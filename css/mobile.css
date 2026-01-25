@@ -20,6 +20,19 @@
 #donation-embed .triggers-list li.expanded .trigger-desc { display:block; }
 #donation-embed .triggers-list li.expanded .price-badge { font-size:1.1rem; }
 
+/* Fullscreen control buttons */
+.embed-controls { position: absolute; top: 10px; right: 12px; z-index: 999; }
+.fs-btn { background: rgba(0,0,0,0.45); color: #fff; border: 0; width:34px; height:34px; border-radius:8px; display:inline-flex; align-items:center; justify-content:center; font-size:14px; margin-left:6px; cursor:pointer }
+.fs-btn:hover { background: rgba(255,255,255,0.06); }
+/* small overlay buttons inside embed areas */
+.responsive-embed .fs-btn { position: absolute; top:8px; right:8px; z-index: 999; }
+.responsive-embed { position: relative; }
+.responsive-embed.player .fs-player { right: 8px; }
+.responsive-embed.chat .fs-chat { right: 8px; }
+
+/* Default control visibility: show player fullscreen; hide combined/chat on desktop by default */
+.fs-combined, .fs-chat { display: none; }
+
 @media (max-width: 720px) {
     .mobile-toggle { display: flex; }
     /* Default on mobile: show links, hide live content */
@@ -44,4 +57,8 @@
     .clips-section { display: none !important; }
     /* When in mobile 'links' view, show the clips/partner blocks */
     body.mobile-links .clips-section { display: block !important; }
+
+    /* On mobile show combined and chat fullscreen controls */
+    .fs-combined, .fs-chat { display: inline-flex; }
+    .embed-controls { right: 8px; top: 8px; }
 }
