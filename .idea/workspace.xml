@@ -4,12 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="00c35883-868f-4c61-99bc-64796ad3d22a" name="Changes" comment="Update Taschengeld donation price range to 1€ - 1,19€">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/img/OF.png" beforeDir="false" afterPath="$PROJECT_DIR$/img/OB.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/img/OnlyBart.png" beforeDir="false" afterPath="$PROJECT_DIR$/img/OnlyBart.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ob.html" beforeDir="false" afterPath="$PROJECT_DIR$/ob.html" afterDir="false" />
+    <list default="true" id="00c35883-868f-4c61-99bc-64796ad3d22a" name="Changes" comment="Rename PAGEVIEW_TRACKING_SETUP.md for improved path clarity">
       <change beforePath="$PROJECT_DIR$/ob/media.html" beforeDir="false" afterPath="$PROJECT_DIR$/ob/media.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ob/photos.html" beforeDir="false" afterPath="$PROJECT_DIR$/ob/photos.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ob/posts.html" beforeDir="false" afterPath="$PROJECT_DIR$/ob/posts.html" afterDir="false" />
@@ -133,31 +128,7 @@
       <workItem from="1768652683789" duration="55000" />
       <workItem from="1769111835934" duration="642000" />
       <workItem from="1769337544883" duration="8663000" />
-      <workItem from="1769357147214" duration="997000" />
-    </task>
-    <task id="LOCAL-00005" summary="Add project configuration files and new HTML pages for Streamplan and updated Impressum">
-      <option name="closed" value="true" />
-      <created>1767694077922</created>
-      <option name="number" value="00005" />
-      <option name="presentableId" value="LOCAL-00005" />
-      <option name="project" value="LOCAL" />
-      <updated>1767694077922</updated>
-    </task>
-    <task id="LOCAL-00006" summary="Update index and Streamplan pages for improved layout and styling; enhance fullwidth hero section">
-      <option name="closed" value="true" />
-      <created>1767694390336</created>
-      <option name="number" value="00006" />
-      <option name="presentableId" value="LOCAL-00006" />
-      <option name="project" value="LOCAL" />
-      <updated>1767694390336</updated>
-    </task>
-    <task id="LOCAL-00007" summary="Refactor HTML structure and improve accessibility for Streamplan page">
-      <option name="closed" value="true" />
-      <created>1767860654498</created>
-      <option name="number" value="00007" />
-      <option name="presentableId" value="LOCAL-00007" />
-      <option name="project" value="LOCAL" />
-      <updated>1767860654498</updated>
+      <workItem from="1769357147214" duration="1273000" />
     </task>
     <task id="LOCAL-00008" summary="Update index.html to rename 'Puzzle' to 'Tanggle.io' and change button text to 'Live mitpuzzeln'">
       <option name="closed" value="true" />
@@ -527,7 +498,31 @@
       <option name="project" value="LOCAL" />
       <updated>1769348498574</updated>
     </task>
-    <option name="localTasksCounter" value="54" />
+    <task id="LOCAL-00054" summary="Update icon references to use new image for OnlyBart">
+      <option name="closed" value="true" />
+      <created>1769358512545</created>
+      <option name="number" value="00054" />
+      <option name="presentableId" value="LOCAL-00054" />
+      <option name="project" value="LOCAL" />
+      <updated>1769358512545</updated>
+    </task>
+    <task id="LOCAL-00055" summary="Rename test files for consistency and clarity">
+      <option name="closed" value="true" />
+      <created>1769358631779</created>
+      <option name="number" value="00055" />
+      <option name="presentableId" value="LOCAL-00055" />
+      <option name="project" value="LOCAL" />
+      <updated>1769358631779</updated>
+    </task>
+    <task id="LOCAL-00056" summary="Rename PAGEVIEW_TRACKING_SETUP.md for improved path clarity">
+      <option name="closed" value="true" />
+      <created>1769358665719</created>
+      <option name="number" value="00056" />
+      <option name="presentableId" value="LOCAL-00056" />
+      <option name="project" value="LOCAL" />
+      <updated>1769358665719</updated>
+    </task>
+    <option name="localTasksCounter" value="57" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -545,8 +540,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Add initial website files including index, impressum, and styles" />
-    <MESSAGE value="Add project configuration and resource files" />
     <MESSAGE value="Update impressum and index pages with new content and styling; add embedded live feeds" />
     <MESSAGE value="Add project configuration files and new HTML pages for Streamplan and updated Impressum" />
     <MESSAGE value="Update index and Streamplan pages for improved layout and styling; enhance fullwidth hero section" />
@@ -568,7 +561,11 @@
     <MESSAGE value="Fix audio file path case sensitivity for Scream donation trigger" />
     <MESSAGE value="Remove audio file reference for Konfettikanone donation trigger" />
     <MESSAGE value="Update Taschengeld donation price range to 1€ - 1,19€" />
-    <option name="LAST_COMMIT_MESSAGE" value="Update Taschengeld donation price range to 1€ - 1,19€" />
+    <MESSAGE value="Refactor OB sides cause Urheberrecht" />
+    <MESSAGE value="Update icon references to use new image for OnlyBart" />
+    <MESSAGE value="Rename test files for consistency and clarity" />
+    <MESSAGE value="Rename PAGEVIEW_TRACKING_SETUP.md for improved path clarity" />
+    <option name="LAST_COMMIT_MESSAGE" value="Rename PAGEVIEW_TRACKING_SETUP.md for improved path clarity" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
