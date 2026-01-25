@@ -4,8 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="00c35883-868f-4c61-99bc-64796ad3d22a" name="Changes" comment="Enhance mobile experience by updating embed visibility and layout for live mode">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    <list default="true" id="00c35883-868f-4c61-99bc-64796ad3d22a" name="Changes" comment="Update manifest.json to change background and theme colors, and modify categories for better alignment with app purpose">
+      <change afterPath="$PROJECT_DIR$/offline.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/sw.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/js/mobile.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/mobile.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -126,23 +128,7 @@
       <workItem from="1769111835934" duration="642000" />
       <workItem from="1769337544883" duration="8663000" />
       <workItem from="1769357147214" duration="1401000" />
-      <workItem from="1769359142826" duration="4684000" />
-    </task>
-    <task id="LOCAL-00013" summary="Update posts.html to enhance layout and improve user interface elements">
-      <option name="closed" value="true" />
-      <created>1768058878115</created>
-      <option name="number" value="00013" />
-      <option name="presentableId" value="LOCAL-00013" />
-      <option name="project" value="LOCAL" />
-      <updated>1768058878115</updated>
-    </task>
-    <task id="LOCAL-00014" summary="Update meta title in multiple HTML files to reflect branding change">
-      <option name="closed" value="true" />
-      <created>1768059313675</created>
-      <option name="number" value="00014" />
-      <option name="presentableId" value="LOCAL-00014" />
-      <option name="project" value="LOCAL" />
-      <updated>1768059313675</updated>
+      <workItem from="1769359142826" duration="5061000" />
     </task>
     <task id="LOCAL-00015" summary="Add initial voting page and related assets">
       <option name="closed" value="true" />
@@ -520,7 +506,23 @@
       <option name="project" value="LOCAL" />
       <updated>1769364950345</updated>
     </task>
-    <option name="localTasksCounter" value="62" />
+    <task id="LOCAL-00062" summary="Enhance mobile experience by adjusting embed height for improved layout">
+      <option name="closed" value="true" />
+      <created>1769365047757</created>
+      <option name="number" value="00062" />
+      <option name="presentableId" value="LOCAL-00062" />
+      <option name="project" value="LOCAL" />
+      <updated>1769365047757</updated>
+    </task>
+    <task id="LOCAL-00063" summary="Update manifest.json to change background and theme colors, and modify categories for better alignment with app purpose">
+      <option name="closed" value="true" />
+      <created>1769365157065</created>
+      <option name="number" value="00063" />
+      <option name="presentableId" value="LOCAL-00063" />
+      <option name="project" value="LOCAL" />
+      <updated>1769365157065</updated>
+    </task>
+    <option name="localTasksCounter" value="64" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -538,8 +540,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Update index.html to rename 'Puzzle' to 'Tanggle.io' and change button text to 'Live mitpuzzeln'" />
-    <MESSAGE value="Refactor HTML file paths and create StreamElements page" />
     <MESSAGE value="Add discount code copy functionality and improve link handling in index.html" />
     <MESSAGE value="Update email links in index.html and impressum.html to include subject lines" />
     <MESSAGE value="Update workspace.xml to modify change list and fix XML formatting" />
@@ -563,7 +563,9 @@
     <MESSAGE value="Add mobile support with toggle functionality and donation embed" />
     <MESSAGE value="Add fullscreen control buttons for player and chat on mobile" />
     <MESSAGE value="Enhance mobile experience by updating embed visibility and layout for live mode" />
-    <option name="LAST_COMMIT_MESSAGE" value="Enhance mobile experience by updating embed visibility and layout for live mode" />
+    <MESSAGE value="Enhance mobile experience by adjusting embed height for improved layout" />
+    <MESSAGE value="Update manifest.json to change background and theme colors, and modify categories for better alignment with app purpose" />
+    <option name="LAST_COMMIT_MESSAGE" value="Update manifest.json to change background and theme colors, and modify categories for better alignment with app purpose" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

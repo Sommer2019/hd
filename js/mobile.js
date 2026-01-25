@@ -375,4 +375,25 @@ function copyDiscountCode(event) {
     // Donations will be loaded when the user switches to mobile 'Live' view or via explicit call.
     // Ensure initial donation visibility
     try { updateDonationVisibility(); } catch(e) {}
-})();
+
+    // Register service worker for offline support
+    try {
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js').then(reg => {
+                // register success
+                console.log('ServiceWorker registered', reg.scope);
+                // Listen for updates
+                reg.addEventListener && reg.addEventListener('updatefound', () => {
+                    const newWorker = reg.installing;
+                    if (!newWorker) return;
+                    newWorker.addEventListener('statechange', () => {
+                        if (newWorker.state === 'installed') {
+                            // new content available
+                            console.log('ServiceWorker: new content installed');
+                        }
+                    });
+                });
+            }).catch(err => console.warn('ServiceWorker registration failed', err));
+        }
+    } catch (e) { console.warn('ServiceWorker registration not available', e); }
+ })();
