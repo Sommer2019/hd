@@ -4,11 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="00c35883-868f-4c61-99bc-64796ad3d22a" name="Changes" comment="Rename PAGEVIEW_TRACKING_SETUP.md for improved path clarity">
-      <change beforePath="$PROJECT_DIR$/ob/media.html" beforeDir="false" afterPath="$PROJECT_DIR$/ob/media.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ob/photos.html" beforeDir="false" afterPath="$PROJECT_DIR$/ob/photos.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ob/posts.html" beforeDir="false" afterPath="$PROJECT_DIR$/ob/posts.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ob/videos.html" beforeDir="false" afterPath="$PROJECT_DIR$/ob/videos.html" afterDir="false" />
+    <list default="true" id="00c35883-868f-4c61-99bc-64796ad3d22a" name="Changes" comment="Refactor workspace.xml to improve task organization and clarity">
+      <change afterPath="$PROJECT_DIR$/img/home.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/img/logo128.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/img/logo512.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/manifest.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/index.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -92,11 +94,11 @@
       <recent name="D:\Daten\Coding\HD\html" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="D:\Daten\Coding\HD\audio" />
       <recent name="D:\Daten\Coding\HD\img" />
       <recent name="D:\Daten\Coding\HD" />
-      <recent name="D:\Daten\Coding\HD\ob" />
-      <recent name="D:\Daten\Coding\HD\ob\HD" />
+      <recent name="D:\Daten\Coding\HD\doku" />
+      <recent name="D:\Daten\Coding\HD\test" />
+      <recent name="D:\Daten\Coding\HD\audio" />
     </key>
   </component>
   <component name="SharedIndexes">
@@ -128,15 +130,8 @@
       <workItem from="1768652683789" duration="55000" />
       <workItem from="1769111835934" duration="642000" />
       <workItem from="1769337544883" duration="8663000" />
-      <workItem from="1769357147214" duration="1273000" />
-    </task>
-    <task id="LOCAL-00008" summary="Update index.html to rename 'Puzzle' to 'Tanggle.io' and change button text to 'Live mitpuzzeln'">
-      <option name="closed" value="true" />
-      <created>1767970070952</created>
-      <option name="number" value="00008" />
-      <option name="presentableId" value="LOCAL-00008" />
-      <option name="project" value="LOCAL" />
-      <updated>1767970070952</updated>
+      <workItem from="1769357147214" duration="1401000" />
+      <workItem from="1769359142826" duration="782000" />
     </task>
     <task id="LOCAL-00009" summary="Refactor HTML file paths and create StreamElements page">
       <option name="closed" value="true" />
@@ -522,7 +517,15 @@
       <option name="project" value="LOCAL" />
       <updated>1769358665719</updated>
     </task>
-    <option name="localTasksCounter" value="57" />
+    <task id="LOCAL-00057" summary="Refactor workspace.xml to improve task organization and clarity">
+      <option name="closed" value="true" />
+      <created>1769358878317</created>
+      <option name="number" value="00057" />
+      <option name="presentableId" value="LOCAL-00057" />
+      <option name="project" value="LOCAL" />
+      <updated>1769358878317</updated>
+    </task>
+    <option name="localTasksCounter" value="58" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -540,7 +543,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Update impressum and index pages with new content and styling; add embedded live feeds" />
     <MESSAGE value="Add project configuration files and new HTML pages for Streamplan and updated Impressum" />
     <MESSAGE value="Update index and Streamplan pages for improved layout and styling; enhance fullwidth hero section" />
     <MESSAGE value="Refactor HTML structure and improve accessibility for Streamplan page" />
@@ -565,7 +567,8 @@
     <MESSAGE value="Update icon references to use new image for OnlyBart" />
     <MESSAGE value="Rename test files for consistency and clarity" />
     <MESSAGE value="Rename PAGEVIEW_TRACKING_SETUP.md for improved path clarity" />
-    <option name="LAST_COMMIT_MESSAGE" value="Rename PAGEVIEW_TRACKING_SETUP.md for improved path clarity" />
+    <MESSAGE value="Refactor workspace.xml to improve task organization and clarity" />
+    <option name="LAST_COMMIT_MESSAGE" value="Refactor workspace.xml to improve task organization and clarity" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

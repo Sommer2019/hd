@@ -1,0 +1,40 @@
+{
+  "name": "HD1920x1080",
+  "short_name": "FullHD",
+  "description": "Linksammlung + Livestream von HD1920x1080",
+  "id": "/",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#ffffff",
+  "theme_color": "#4CAF50",
+  "lang": "de",
+  "dir": "ltr",
+  "icons": [
+    {
+      "src": "/icons/logo192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/logo512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/img/home.png",
+      "sizes": "1080x1920",
+      "type": "image/png"
+    }
+  ],
+  "launch_handler": {
+    "client_mode": "navigate-existing"
+  },
+  "prefer_related_applications": false,
+  "related_applications": [],
+  "scope_extensions": [],
+  "categories": ["education", "quiz", "game"]
+}
