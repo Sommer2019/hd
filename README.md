@@ -57,6 +57,7 @@ Manuelle zweite Voting-Runde für besondere Events:
 - `.github/workflows/check-second-voting-expiry.yml` — Tägliche Ablaufprüfung
 
 ## Dokumentation
+- `SUPABASE_CONFIG_SETUP.md` — **Supabase Konfiguration mit Environment Variables**
 - `SECOND_VOTING_FEATURE.md` — Komplette Feature-Dokumentation
 - `DATABASE_MIGRATION.md` — Datenbank-Migrations-Anleitung
 - `SETUP_GUIDE.md` — Setup-Anleitung
@@ -72,6 +73,13 @@ Manuelle zweite Voting-Runde für besondere Events:
 ### Setup
 ```bash
 npm install
+
+# For local development, create .env file with Supabase credentials
+cp .env.example .env
+# Edit .env and add your credentials
+
+# Generate config.js from environment variables
+npm run build-config
 ```
 
 ### Verfügbare Scripts

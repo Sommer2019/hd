@@ -7,7 +7,7 @@
     <link rel="icon" href="img/HD.png" type="image/png">
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/clip-voting.css">
-    <script src="js/supabase-client.js"></script>
+    <link rel="stylesheet" href="css/cookie-banner.css">
 </head>
 <body>
 <main class="container">
@@ -41,14 +41,29 @@
     </div>
 
     <footer class="footer">
-        <p>© <span id="year"></span> FullHD Media <a href="impressum.html">Impressum</a></p>
+        <p>© <span id="year"></span> FullHD Media <a href="impressum.html">Impressum</a> | <a href="datenschutz.html">Datenschutz</a></p>
     </footer>
 </main>
 <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
 <script src="js/clip-voting.js"></script>
 
+<!-- Cookie Consent Banner -->
+<div id="cookie-banner" class="cookie-banner">
+    <div class="cookie-banner-content">
+        <div class="cookie-banner-text">
+            Wir verwenden Cookies, um anonymisierte Seitenaufrufe zu erfassen und unsere Website zu verbessern. Weitere Informationen finden Sie in unserer <a href="datenschutz.html">Datenschutzerklärung</a>.
+        </div>
+        <div class="cookie-banner-buttons">
+            <button id="cookie-accept" class="btn btn-accept">Akzeptieren</button>
+            <button id="cookie-reject" class="btn btn-reject">Ablehnen</button>
+        </div>
+    </div>
+</div>
+
 <!-- Page View Tracking -->
+<script src="js/config.js"></script>
 <script src="js/supabase-client.js"></script>
+<script src="js/cookie-consent.js"></script>
 <script src="js/page-view-tracker.js"></script>
 
 </body>

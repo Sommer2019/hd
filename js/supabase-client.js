@@ -1,12 +1,19 @@
 // Supabase Browser Client
 // This file provides Supabase access from the browser
 
-// Supabase configuration - these are PUBLIC keys that are safe to expose in client-side code
-// The publishable/anon key is designed to be used in browser applications
-// ⚠️ IMPORTANT: Replace SUPABASE_PUBLISHABLE_KEY with your actual anon key from Supabase dashboard
-// Go to: Supabase Project Settings → API → Project API keys → anon/public key
-const SUPABASE_URL = 'https://itbmerllqlwoinsletkz.supabase.co';
-const SUPABASE_PUBLISHABLE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml0Ym1lcmxscWx3b2luc2xldGt6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg1Nzc1NzksImV4cCI6MjA4NDE1MzU3OX0.k8fHdFB2R31mB5spP5fukb0h0X_ToExrLBrcW4uL4fE'; // Replace with actual key from Supabase dashboard
+// Supabase configuration is loaded from config.js
+// The config.js file is generated at build time from environment variables
+// For local development: Run `npm run build-config` to generate config.js from .env
+// For production: GitHub Actions will generate config.js from repository secrets
+function getSupabaseConfig() {
+  if (!window.SUPABASE_CONFIG) {
+    throw new Error('Supabase configuration not loaded. Make sure config.js is included before this script.');
+  }
+  return window.SUPABASE_CONFIG;
+}
+
+const SUPABASE_URL = getSupabaseConfig().url;
+const SUPABASE_PUBLISHABLE_KEY = getSupabaseConfig().publishableKey;
 
 // Initialize Supabase client using CDN
 let supabaseClient = null;

@@ -6,6 +6,7 @@
     <meta name="description" content="Donations an HD">
     <link rel="icon" href="img/HD.png" type="image/png">
     <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/cookie-banner.css">
 </head>
 <body>
 <main class="container">
@@ -104,7 +105,7 @@
     </div>
 
     <footer class="footer">
-        <p>© <span id="year"></span> FullHD Media <a href="impressum.html">Impressum</a></p>
+        <p>© <span id="year"></span> FullHD Media <a href="impressum.html">Impressum</a> | <a href="datenschutz.html">Datenschutz</a></p>
     </footer>
 </main>
 <script>document.getElementById('year').textContent = new Date().getFullYear();
@@ -190,7 +191,9 @@ document.querySelectorAll('.triggers-list li').forEach(item => {
 
 
 <!-- Page View Tracking -->
+<script src="js/config.js"></script>
 <script src="js/supabase-client.js"></script>
+<script src="js/cookie-consent.js"></script>
 <script src="js/page-view-tracker.js"></script>
 
 </body>

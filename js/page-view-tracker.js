@@ -1,8 +1,16 @@
 // Page View Tracker
 // Tracks page views with session ID and 2-minute cooldown per page
+// Only tracks if user has given cookie consent
 
-(async function() {
+// Main tracking function
+async function initPageViewTracking() {
     try {
+        // Check if user has given consent
+        if (!window.cookieConsent || !window.cookieConsent.hasConsent()) {
+            console.debug('Page view tracking: No consent given');
+            return;
+        }
+
         // Get the Supabase client
         const supabase = await getSupabaseClient();
         
@@ -27,7 +35,10 @@
         // Silently fail - don't disrupt the user experience
         console.debug('Page view tracking error:', error);
     }
-})();
+}
+
+// Export for cookie consent to call
+window.initPageViewTracking = initPageViewTracking;
 
 // Get or create a session ID using localStorage (persistent across tabs)
 function getOrCreateSessionId() {

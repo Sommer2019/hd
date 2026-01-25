@@ -19,6 +19,7 @@
     .error-actions{margin-top:18px;display:flex;gap:12px;justify-content:center}
     @media (max-width:520px){.error-logo{width:120px}.error-card{padding:18px}}
   </style>
+    <link rel="stylesheet" href="css/cookie-banner.css">
 </head>
 <body>
   <!-- Behalte das originale Script unverändert (wichtig: Funktion nicht ändern) -->
@@ -94,7 +95,7 @@
   </main>
 
   <footer class="footer container">
-    <p>© <span id="year"></span> FullHD Media <a href="impressum.html">Impressum</a></p>
+    <p>© <span id="year"></span> FullHD Media <a href="impressum.html">Impressum</a> | <a href="datenschutz.html">Datenschutz</a></p>
   </footer>
 
   <script>
@@ -103,7 +104,9 @@
   </script>
   
   <!-- Page View Tracking -->
+  <script src="js/config.js"></script>
   <script src="js/supabase-client.js"></script>
+<script src="js/cookie-consent.js"></script>
   <script src="js/page-view-tracker.js"></script>
   
 </body>
