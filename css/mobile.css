@@ -10,7 +10,7 @@
 #donation-embed .embed-card { padding: .75rem; }
 
 /* Donation tiles: show only price initially */
-#donation-embed .triggers-list { display:flex; flex-wrap:wrap; gap:10px; padding:0; margin:0; list-style:none; }
+#donation-embed .triggers-list { display:flex; flex-wrap:wrap; gap:10px; padding:0; margin:0; list-style:none; justify-content:center; align-items:center; }
 #donation-embed .triggers-list li { display:flex; flex-direction:column; align-items:center; justify-content:center; width:84px; height:84px; min-width:84px; border-radius:10px; background:#000; box-shadow:0 1px 4px rgba(0,0,0,0.2); padding:8px; cursor:pointer; position:relative; text-align:center; overflow:hidden; }
 #donation-embed .triggers-list li .price-badge { display:block; font-weight:700; font-size:1rem; color:#fff; }
 #donation-embed .triggers-list li .trigger-desc { display:none; font-size:0.8rem; margin-top:6px; color:#ddd; }

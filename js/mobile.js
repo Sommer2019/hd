@@ -203,8 +203,13 @@ function copyDiscountCode(event) {
             seLink.href = 'https://streamelements.com/hd1920x1080-5003/tip';
             seLink.target = '_blank';
             seLink.rel = 'noopener noreferrer';
-            seLink.style.display = 'inline-block';
+            // make the card wider / full width
+            seLink.style.display = 'block';
+            seLink.style.width = '100%';
+            seLink.style.maxWidth = '100%';
+            seLink.style.boxSizing = 'border-box';
             seLink.style.marginTop = '0.5rem';
+            seLink.style.padding = '0.5rem';
             seLink.innerHTML = `
                 <img src="img/StreamElements.png" alt="StreamElements" class="icon">
                 <div class="card-text">
@@ -299,6 +304,10 @@ function copyDiscountCode(event) {
     liveBtn.addEventListener('click', () => updateDonationVisibility());
 
     // Fullscreen helpers
+    function getFullscreenElement() {
+        return document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement || null;
+    }
+
     function requestFullscreenFor(el) {
         if (!el) return Promise.reject('no element');
         if (el.requestFullscreen) return el.requestFullscreen();
@@ -306,6 +315,7 @@ function copyDiscountCode(event) {
         if (el.msRequestFullscreen) return el.msRequestFullscreen();
         return Promise.reject('Fullscreen not supported');
     }
+
     function exitFullscreen() {
         if (document.exitFullscreen) return document.exitFullscreen();
         if (document.webkitExitFullscreen) return document.webkitExitFullscreen();
@@ -318,32 +328,60 @@ function copyDiscountCode(event) {
     const fsCombinedBtn = document.getElementById('fs-combined-btn');
     const playerEmbed = document.querySelector('.responsive-embed.player');
     const chatEmbed = document.querySelector('.responsive-embed.chat');
+    const combinedWrapper = document.querySelector('.embed-card.fullwidth') || document.querySelector('.embed-wrapper');
 
-    function updateFsButtonState() {
-        const isFs = !!(document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement);
-        // simple aria-pressed state
-        if (fsPlayerBtn) fsPlayerBtn.setAttribute('aria-pressed', String(isFs && (document.fullscreenElement === playerEmbed || document.webkitFullscreenElement === playerEmbed)));
-        if (fsChatBtn) fsChatBtn.setAttribute('aria-pressed', String(isFs && (document.fullscreenElement === chatEmbed || document.webkitFullscreenElement === chatEmbed)));
-        if (fsCombinedBtn) fsCombinedBtn.setAttribute('aria-pressed', String(isFs && (document.fullscreenElement === playerEmbed || document.fullscreenElement === chatEmbed)));
+    // track current fullscreen target to avoid ambiguity
+    let currentFsElement = null;
+    let isToggling = false; // prevent re-entrant toggles while changing state
+    let lastManualFsToggle = 0; // timestamp to prevent auto-fullscreen immediately after manual toggles
+
+    function _matchesFullscreen(fsEl, targetEl) {
+        if (!fsEl || !targetEl) return false;
+        try {
+            return fsEl === targetEl || targetEl.contains(fsEl) || fsEl.contains(targetEl);
+        } catch (e) { return fsEl === targetEl; }
     }
 
-    if (fsPlayerBtn) fsPlayerBtn.addEventListener('click', () => {
-        if (!playerEmbed) return;
-        if (document.fullscreenElement === playerEmbed) { exitFullscreen().catch(()=>{}); } else { requestFullscreenFor(playerEmbed).catch(()=>{}); }
-    });
-    if (fsChatBtn) fsChatBtn.addEventListener('click', () => {
-        if (!chatEmbed) return;
-        if (document.fullscreenElement === chatEmbed) { exitFullscreen().catch(()=>{}); } else { requestFullscreenFor(chatEmbed).catch(()=>{}); }
-    });
-    if (fsCombinedBtn) fsCombinedBtn.addEventListener('click', () => {
-        // combined: request fullscreen on parent wrapper to show both
-        const wrapper = document.querySelector('.embed-card.fullwidth');
-        if (!wrapper) return;
-        if (document.fullscreenElement === wrapper) { exitFullscreen().catch(()=>{}); } else { requestFullscreenFor(wrapper).catch(()=>{}); }
-    });
+    function updateFsButtonState() {
+        const fsEl = getFullscreenElement();
+        currentFsElement = fsEl;
+        if (fsPlayerBtn) fsPlayerBtn.setAttribute('aria-pressed', String(_matchesFullscreen(fsEl, playerEmbed)));
+        if (fsChatBtn) fsChatBtn.setAttribute('aria-pressed', String(_matchesFullscreen(fsEl, chatEmbed)));
+        if (fsCombinedBtn) fsCombinedBtn.setAttribute('aria-pressed', String(_matchesFullscreen(fsEl, combinedWrapper)));
+    }
 
-    document.addEventListener('fullscreenchange', updateFsButtonState);
-    document.addEventListener('webkitfullscreenchange', updateFsButtonState);
+    function toggleFullscreenFor(targetEl) {
+        if (!targetEl || isToggling) return;
+        isToggling = true;
+        lastManualFsToggle = Date.now();
+        console.debug('toggleFullscreenFor', targetEl, 'timestamp', lastManualFsToggle);
+
+        const fsEl = getFullscreenElement();
+        // If already fullscreen and it matches the target -> exit
+        if (_matchesFullscreen(fsEl, targetEl)) {
+            exitFullscreen().catch(()=>{}).finally(() => { isToggling = false; });
+            return;
+        }
+        // If another element is fullscreen, exit first then request on target
+        if (fsEl) {
+            exitFullscreen().then(() => requestFullscreenFor(targetEl)).catch(() => { return requestFullscreenFor(targetEl); }).finally(() => { isToggling = false; });
+            return;
+        }
+        // No fullscreen active -> request directly
+        requestFullscreenFor(targetEl).catch(()=>{}).finally(() => { isToggling = false; });
+    }
+
+    if (fsPlayerBtn) fsPlayerBtn.addEventListener('click', () => toggleFullscreenFor(playerEmbed));
+    if (fsChatBtn) fsChatBtn.addEventListener('click', () => toggleFullscreenFor(chatEmbed));
+    if (fsCombinedBtn) fsCombinedBtn.addEventListener('click', () => toggleFullscreenFor(combinedWrapper));
+
+    // Keep button state in sync with actual fullscreen changes
+    function onFsChange() { isToggling = false; updateFsButtonState(); }
+    document.addEventListener('fullscreenchange', onFsChange);
+    document.addEventListener('webkitfullscreenchange', onFsChange);
+    document.addEventListener('msfullscreenchange', onFsChange);
+    // Set initial button state
+    try { updateFsButtonState(); } catch (e) { /* ignore */ }
 
     // On mobile, enter player fullscreen on landscape orientation (optional, only if user allows)
     function handleOrientation(e) {
@@ -352,9 +390,12 @@ function copyDiscountCode(event) {
             const beta = (e && e.beta) || 0; // front/back tilt
             // rough: if rotated to landscape (|gamma| > 45) or beta near +/-90
             const isLandscape = Math.abs(gamma) > 45 || Math.abs(beta) > 60;
-            if (mq.matches && isLandscape) {
+            // Prevent auto-fullscreen if user toggled manually recently
+            const now = Date.now();
+            if (mq.matches && isLandscape && (now - lastManualFsToggle > 5000) && !isToggling) {
                 // only request fullscreen for player
                 if (playerEmbed && !document.fullscreenElement) {
+                    console.debug('Auto fullscreen due to orientation');
                     requestFullscreenFor(playerEmbed).catch(()=>{});
                 }
             }
