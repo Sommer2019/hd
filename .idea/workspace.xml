@@ -4,13 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="00c35883-868f-4c61-99bc-64796ad3d22a" name="Changes" comment="Refactor workspace.xml to improve task organization and clarity">
-      <change afterPath="$PROJECT_DIR$/img/home.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/img/logo128.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/img/logo512.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/manifest.json" afterDir="false" />
+    <list default="true" id="00c35883-868f-4c61-99bc-64796ad3d22a" name="Changes" comment="Enhance mobile experience by updating embed visibility and layout for live mode">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/index.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -131,39 +126,7 @@
       <workItem from="1769111835934" duration="642000" />
       <workItem from="1769337544883" duration="8663000" />
       <workItem from="1769357147214" duration="1401000" />
-      <workItem from="1769359142826" duration="782000" />
-    </task>
-    <task id="LOCAL-00009" summary="Refactor HTML file paths and create StreamElements page">
-      <option name="closed" value="true" />
-      <created>1767972596030</created>
-      <option name="number" value="00009" />
-      <option name="presentableId" value="LOCAL-00009" />
-      <option name="project" value="LOCAL" />
-      <updated>1767972596030</updated>
-    </task>
-    <task id="LOCAL-00010" summary="Add discount code copy functionality and improve link handling in index.html">
-      <option name="closed" value="true" />
-      <created>1767973239722</created>
-      <option name="number" value="00010" />
-      <option name="presentableId" value="LOCAL-00010" />
-      <option name="project" value="LOCAL" />
-      <updated>1767973239723</updated>
-    </task>
-    <task id="LOCAL-00011" summary="Update email links in index.html and impressum.html to include subject lines">
-      <option name="closed" value="true" />
-      <created>1768040586896</created>
-      <option name="number" value="00011" />
-      <option name="presentableId" value="LOCAL-00011" />
-      <option name="project" value="LOCAL" />
-      <updated>1768040586896</updated>
-    </task>
-    <task id="LOCAL-00012" summary="Update workspace.xml to modify change list and fix XML formatting">
-      <option name="closed" value="true" />
-      <created>1768058636059</created>
-      <option name="number" value="00012" />
-      <option name="presentableId" value="LOCAL-00012" />
-      <option name="project" value="LOCAL" />
-      <updated>1768058636059</updated>
+      <workItem from="1769359142826" duration="4684000" />
     </task>
     <task id="LOCAL-00013" summary="Update posts.html to enhance layout and improve user interface elements">
       <option name="closed" value="true" />
@@ -525,7 +488,39 @@
       <option name="project" value="LOCAL" />
       <updated>1769358878317</updated>
     </task>
-    <option name="localTasksCounter" value="58" />
+    <task id="LOCAL-00058" summary="Refactor workspace.xml to improve task organization and clarity">
+      <option name="closed" value="true" />
+      <created>1769360030459</created>
+      <option name="number" value="00058" />
+      <option name="presentableId" value="LOCAL-00058" />
+      <option name="project" value="LOCAL" />
+      <updated>1769360030459</updated>
+    </task>
+    <task id="LOCAL-00059" summary="Add mobile support with toggle functionality and donation embed">
+      <option name="closed" value="true" />
+      <created>1769362930062</created>
+      <option name="number" value="00059" />
+      <option name="presentableId" value="LOCAL-00059" />
+      <option name="project" value="LOCAL" />
+      <updated>1769362930062</updated>
+    </task>
+    <task id="LOCAL-00060" summary="Add fullscreen control buttons for player and chat on mobile">
+      <option name="closed" value="true" />
+      <created>1769363155154</created>
+      <option name="number" value="00060" />
+      <option name="presentableId" value="LOCAL-00060" />
+      <option name="project" value="LOCAL" />
+      <updated>1769363155154</updated>
+    </task>
+    <task id="LOCAL-00061" summary="Enhance mobile experience by updating embed visibility and layout for live mode">
+      <option name="closed" value="true" />
+      <created>1769364950345</created>
+      <option name="number" value="00061" />
+      <option name="presentableId" value="LOCAL-00061" />
+      <option name="project" value="LOCAL" />
+      <updated>1769364950345</updated>
+    </task>
+    <option name="localTasksCounter" value="62" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -543,9 +538,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Add project configuration files and new HTML pages for Streamplan and updated Impressum" />
-    <MESSAGE value="Update index and Streamplan pages for improved layout and styling; enhance fullwidth hero section" />
-    <MESSAGE value="Refactor HTML structure and improve accessibility for Streamplan page" />
     <MESSAGE value="Update index.html to rename 'Puzzle' to 'Tanggle.io' and change button text to 'Live mitpuzzeln'" />
     <MESSAGE value="Refactor HTML file paths and create StreamElements page" />
     <MESSAGE value="Add discount code copy functionality and improve link handling in index.html" />
@@ -568,7 +560,10 @@
     <MESSAGE value="Rename test files for consistency and clarity" />
     <MESSAGE value="Rename PAGEVIEW_TRACKING_SETUP.md for improved path clarity" />
     <MESSAGE value="Refactor workspace.xml to improve task organization and clarity" />
-    <option name="LAST_COMMIT_MESSAGE" value="Refactor workspace.xml to improve task organization and clarity" />
+    <MESSAGE value="Add mobile support with toggle functionality and donation embed" />
+    <MESSAGE value="Add fullscreen control buttons for player and chat on mobile" />
+    <MESSAGE value="Enhance mobile experience by updating embed visibility and layout for live mode" />
+    <option name="LAST_COMMIT_MESSAGE" value="Enhance mobile experience by updating embed visibility and layout for live mode" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

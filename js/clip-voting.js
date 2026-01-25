@@ -346,7 +346,7 @@
         const embedWrapper = document.createElement('div');
         embedWrapper.className = 'clip-embed-wrapper';
         embedWrapper.style.width = '100%';
-        embedWrapper.style.height = '360px';
+        embedWrapper.style.height = '160px';
         embedWrapper.style.marginBottom = '8px';
 
         // Wir fügen einen Platzhalter ein und enqueuen das Embed, damit iframes
