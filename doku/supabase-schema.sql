@@ -269,7 +269,10 @@ CREATE POLICY "Allow public read access to streams"
     ON streams FOR SELECT
     USING (true);
 
-CREATE POLICY "Allow anon role to manage streams"
+-- Only allow service role (GitHub Actions script) to modify streams table
+CREATE POLICY "Allow service role to manage streams"
     ON streams FOR ALL
-    USING (true);
+    TO service_role
+    USING (true)
+    WITH CHECK (true);
 

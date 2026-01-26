@@ -7,15 +7,19 @@ let checkIntervalId = null;
 let currentStreamStatus = null;
 
 // Check if stream is live using Twitch embed API
+// Expected responses from decapi.me:
+// - When live: "X hours Y minutes Z seconds" (or similar time format)
+// - When offline: "channel is offline" or similar message with "offline"/"not" keywords
 async function checkStreamStatus() {
   try {
-    // Use Twitch embed player API to check stream status
-    // We'll check by trying to load stream info from Twitch's public API
+    // Use decapi.me Twitch uptime API to check stream status
     const response = await fetch(`https://decapi.me/twitch/uptime/${TWITCH_CHANNEL}?precision=7`);
     const text = await response.text();
     
-    // If stream is offline, the API returns a message containing "offline"
-    const isLive = !text.toLowerCase().includes('offline') && !text.toLowerCase().includes('not') && text.trim().length > 0;
+    // If stream is offline, the API typically returns a message containing "offline" or "not"
+    // If live, it returns the uptime duration (e.g., "2 hours 30 minutes")
+    const textLower = text.toLowerCase();
+    const isLive = !textLower.includes('offline') && !textLower.includes('not') && text.trim().length > 0;
     
     return isLive;
   } catch (error) {
@@ -47,6 +51,13 @@ function formatStreamTime(dateString) {
 // Show offline message with next stream info
 async function showOfflineMessage() {
   try {
+    // Check if getNextStream function is available
+    if (typeof getNextStream !== 'function') {
+      console.warn('getNextStream function not available - showing fallback message');
+      showOfflineFallback();
+      return;
+    }
+    
     // Get next stream from Supabase
     const nextStream = await getNextStream();
     
@@ -89,6 +100,35 @@ async function showOfflineMessage() {
   } catch (error) {
     console.warn('Error showing offline message:', error);
   }
+}
+
+// Show offline fallback message when next stream data is unavailable
+function showOfflineFallback() {
+  const playerWrapper = document.querySelector('.responsive-embed.player');
+  if (!playerWrapper) return;
+  
+  const iframe = playerWrapper.querySelector('.twitch-player-iframe');
+  if (iframe) {
+    iframe.style.display = 'none';
+  }
+  
+  const offlineDiv = document.createElement('div');
+  offlineDiv.className = 'stream-offline-message';
+  offlineDiv.innerHTML = `
+    <div class="offline-content">
+      <div class="offline-icon">📺</div>
+      <h2>Stream ist offline</h2>
+      <p>Schau bald wieder vorbei!</p>
+      <p><a href="streamplan.html" class="streamplan-link">Zum Streamplan →</a></p>
+    </div>
+  `;
+  
+  const existing = playerWrapper.querySelector('.stream-offline-message');
+  if (existing) {
+    existing.remove();
+  }
+  
+  playerWrapper.appendChild(offlineDiv);
 }
 
 // Show stream embed (remove offline message)

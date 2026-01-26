@@ -487,12 +487,15 @@ async function getOnlyBartPageViewStats(timeRange) {
 }
 
 // Get next stream information from database
+// Note: The sync script always uses ID 1 for the next upcoming stream
+const NEXT_STREAM_ID = 1;
+
 async function getNextStream() {
   const supabase = await getSupabaseClient();
   const { data, error } = await supabase
     .from('streams')
     .select('*')
-    .eq('id', 1)
+    .eq('id', NEXT_STREAM_ID)
     .single();
   
   if (error && error.code !== 'PGRST116') {
