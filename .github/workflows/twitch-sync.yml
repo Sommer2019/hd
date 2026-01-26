@@ -19,10 +19,13 @@ jobs:
       - name: Install Dependencies
         run: pip install requests icalendar
 
-      - name: Run Sync
+            - name: Run Sync
         env:
+          # LINKS steht der Name, den Python mit os.getenv() sucht
+          # RECHTS steht der Name deines GitHub Secrets
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           TWITCH_CLIENT_ID: ${{ secrets.TWITCH_CLIENT_ID }}
-          TWITCH_CLIENT_SECRET: ${{ secrets.TWITCH_CLIENT_SECRET }}
+          TWITCH_TOKEN: ${{ secrets.TWITCH_TOKEN }}
           TWITCH_CHANNEL: ${{ secrets.TWITCH_CHANNEL }}
         run: python .github/scripts/sync_to_twitch.py
-        
