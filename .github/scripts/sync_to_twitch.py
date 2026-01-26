@@ -7,21 +7,14 @@ from datetime import datetime, timezone
 CLIENT_ID = os.getenv('TWITCH_CLIENT_ID')
 USER_TOKEN = os.getenv('TWITCH_TOKEN') 
 CHANNEL_NAME = os.getenv('TWITCH_CHANNEL')
-
-# Supabase Config (Optional, falls du es nutzt)
 SUPABASE_URL = os.getenv('SUPABASE_URL')
-SUPABASE_KEY = os.getenv('SUPABASE_SERVICE_ROLE_KEY')
+SUPABASE_KEY = os.getenv('SUPABASE_SERVICE_ROLE_KEY') # WICHTIG: Service Role Key nutzen
 
 ICS_URL = "https://export.kalender.digital/ics/0/4ccef74582e0eb8d7026/twitchhd1920x1080.ics?past_months=3&future_months=36"
 
-def get_broadcaster_id(headers):
-    url = f"https://api.twitch.tv/helix/users?login={CHANNEL_NAME}"
-    r = requests.get(url, headers=headers)
-    r.raise_for_status()
-    return r.json()['data'][0]['id']
-
 def update_supabase(event_data):
     if not SUPABASE_URL or not SUPABASE_KEY:
+        print("Supabase Config fehlt (URL oder KEY).")
         return
     
     url = f"{SUPABASE_URL}/rest/v1/streams"
@@ -31,29 +24,18 @@ def update_supabase(event_data):
         "Content-Type": "application/json",
         "Prefer": "resolution=merge-duplicates"
     }
-    # Wir speichern den nächsten Stream immer unter ID 1
     payload = {
         "id": 1, 
         "title": event_data['title'],
         "start_time": event_data['start_time']
     }
     r = requests.post(url, headers=headers, json=payload)
-    print(f"Supabase Update: {r.status_code}")
+    print(f"Supabase Update Status: {r.status_code}")
+    if r.status_code >= 400: print(f"Supabase Fehler: {r.text}")
 
 def sync():
-    headers = {
-        "Client-Id": CLIENT_ID,
-        "Authorization": f"Bearer {USER_TOKEN}",
-        "Content-Type": "application/json"
-    }
-    
-    try:
-        b_id = get_broadcaster_id(headers)
-    except Exception as e:
-        print(f"Fehler: Konnte Broadcaster ID nicht laden. Check dein Token! {e}")
-        return
-
-    # iCal laden
+    # 1. iCal laden (Wichtig für beide Plattformen)
+    print("Lade iCal Feed...")
     response = requests.get(ICS_URL)
     if "BEGIN:VCALENDAR" not in response.text:
         print("Fehler: Ungültiger iCal Feed.")
@@ -61,46 +43,57 @@ def sync():
         
     cal = Calendar.from_ical(response.content)
     now = datetime.now(timezone.utc)
-    
     upcoming_events = []
 
+    # Events parsen
     for event in cal.walk('vevent'):
         start = event.get('dtstart').dt
         if not isinstance(start, datetime): continue
         if start.tzinfo is None: start = start.replace(tzinfo=timezone.utc)
-
         if start > now:
-            end = event.get('dtend').dt
-            if end.tzinfo is None: end = end.replace(tzinfo=timezone.utc)
-            duration = int((end - start).total_seconds() / 60)
-            
-            title = str(event.get('summary'))[:140]
-            start_iso = start.strftime('%Y-%m-%dT%H:%M:%SZ')
+            upcoming_events.append({
+                "title": str(event.get('summary'))[:140],
+                "start_time": start.strftime('%Y-%m-%dT%H:%M:%SZ'),
+                "duration": int((event.get('dtend').dt - start).total_seconds() / 60)
+            })
 
-            upcoming_events.append({"title": title, "start_time": start_iso})
+    if not upcoming_events:
+        print("Keine zukünftigen Events gefunden.")
+        return
 
-            # 1. Twitch Sync
+    upcoming_events.sort(key=lambda x: x['start_time'])
+
+    # 2. SUPABASE UPDATE (Unabhängig von Twitch)
+    print(f"Update Supabase mit: {upcoming_events[0]['title']}")
+    update_supabase(upcoming_events[0])
+
+    # 3. TWITCH SYNC
+    print("Starte Twitch Sync...")
+    twitch_headers = {
+        "Client-Id": CLIENT_ID,
+        "Authorization": f"Bearer {USER_TOKEN}",
+        "Content-Type": "application/json"
+    }
+    
+    try:
+        # ID holen
+        u_resp = requests.get(f"https://api.twitch.tv/helix/users?login={CHANNEL_NAME}", headers=twitch_headers)
+        u_resp.raise_for_status()
+        b_id = u_resp.json()['data'][0]['id']
+
+        for ev in upcoming_events:
             payload = {
-                "start_time": start_iso,
+                "start_time": ev['start_time'],
                 "timezone": "Europe/Berlin",
-                "duration": str(duration),
+                "duration": str(ev['duration']),
                 "is_recurring": False,
-                "title": title
+                "title": ev['title']
             }
-            
-            r = requests.post(
-                "https://api.twitch.tv/helix/schedule/segment", 
-                headers=headers, 
-                json=payload, 
-                params={"broadcaster_id": b_id}
-            )
-            print(f"Twitch Sync '{title}': {r.status_code}")
-
-    # 2. Supabase Update (nur den zeitlich nächsten Stream)
-    if upcoming_events:
-        # Sortieren nach Zeit, falls iCal unsortiert ist
-        upcoming_events.sort(key=lambda x: x['start_time'])
-        update_supabase(upcoming_events[0])
+            r = requests.post("https://api.twitch.tv/helix/schedule/segment", 
+                              headers=twitch_headers, json=payload, params={"broadcaster_id": b_id})
+            print(f"Twitch '{ev['title']}': {r.status_code}")
+    except Exception as e:
+        print(f"Twitch Sync fehlgeschlagen (Check dein Token!): {e}")
 
 if __name__ == "__main__":
     sync()
