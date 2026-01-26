@@ -10,7 +10,7 @@ CHANNEL_NAME = os.getenv('TWITCH_CHANNEL')
 
 # Supabase Config (Optional, falls du es nutzt)
 SUPABASE_URL = os.getenv('SUPABASE_URL')
-SUPABASE_KEY = os.getenv('SUPABASE_KEY')
+SUPABASE_KEY = os.getenv('SUPABASE_SERVICE_ROLE_KEY')
 
 ICS_URL = "https://export.kalender.digital/ics/0/4ccef74582e0eb8d7026/twitchhd1920x1080.ics?past_months=3&future_months=36"
 
