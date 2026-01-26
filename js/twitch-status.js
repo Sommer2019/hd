@@ -6,39 +6,9 @@
 class TwitchStatusChecker {
     constructor(channelName) {
         this.channelName = channelName;
-        this.clientId = null;
-        this.accessToken = null;
         this.lastStatus = null;
         this.checkInterval = 60000; // Check every 60 seconds
         this.intervalId = null;
-        this.listeners = [];
-    }
-
-    /**
-     * Get OAuth token for Twitch API
-     * Uses client credentials flow with anonymous access
-     */
-    async getAccessToken() {
-        try {
-            // Try to get token from Twitch's public API
-            // Note: The client ID below is Twitch's public/anonymous client ID
-            // This is safe to expose and is intended for public use without secrets
-            const response = await fetch(`https://api.twitch.tv/helix/streams?user_login=${this.channelName}`, {
-                headers: {
-                    'Client-ID': 'kimne78kx3ncx6brgo4mv6wki5h1ko' // Twitch's public anonymous client ID
-                }
-            });
-            
-            if (response.status === 401) {
-                console.warn('Twitch API authentication failed, using fallback method');
-                return null;
-            }
-            
-            return true;
-        } catch (error) {
-            console.warn('Could not authenticate with Twitch API:', error);
-            return null;
-        }
     }
 
     /**
@@ -143,20 +113,6 @@ class TwitchStatusChecker {
         } catch (error) {
             console.error('Error in checkAndNotify:', error);
         }
-    }
-
-    /**
-     * Add a status change listener
-     */
-    addListener(callback) {
-        this.listeners.push(callback);
-    }
-
-    /**
-     * Remove a status change listener
-     */
-    removeListener(callback) {
-        this.listeners = this.listeners.filter(cb => cb !== callback);
     }
 }
 
