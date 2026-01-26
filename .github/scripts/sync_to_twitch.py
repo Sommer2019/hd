@@ -7,7 +7,7 @@ from datetime import datetime
 CLIENT_ID = os.getenv('TWITCH_CLIENT_ID')
 CLIENT_SECRET = os.getenv('TWITCH_CLIENT_SECRET')
 CHANNEL_NAME = os.getenv('TWITCH_CHANNEL')
-ICS_URL = "https://kalender.digital/ical/feed/4ccef74582e0eb8d7026"
+ICS_URL = "https://export.kalender.digital/ics/0/4ccef74582e0eb8d7026/twitchhd1920x1080.ics?past_months=3&future_months=36"
 
 def get_access_token():
     url = f"https://id.twitch.tv/oauth2/token?client_id={CLIENT_ID}&client_secret={CLIENT_SECRET}&grant_type=client_credentials&scope=channel:manage:schedule"
