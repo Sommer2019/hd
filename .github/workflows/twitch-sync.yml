@@ -24,5 +24,5 @@ jobs:
           TWITCH_CLIENT_ID: ${{ secrets.TWITCH_CLIENT_ID }}
           TWITCH_CLIENT_SECRET: ${{ secrets.TWITCH_CLIENT_SECRET }}
           TWITCH_CHANNEL: ${{ secrets.TWITCH_CHANNEL }}
-        run: python sync_to_twitch.py
+        run: python .github/scripts/sync_to_twitch.py
         
